@@ -1,0 +1,33 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+dashboard_frontend/node_modules
+
+# next.js
+dashboard_frontend/.next/
+dashboard_frontend/out/
+
+# production
+dashboard_frontend/build
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+#Mac
+.DS_Store
+
+#python
+__pycache__/
+
+# env files
+.env*
+backend/.serval_backend
+.venv/
+
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts

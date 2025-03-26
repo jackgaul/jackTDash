@@ -1,0 +1,206 @@
+from flask import Flask, request, jsonify
+import psycopg2
+from psycopg2 import Error
+import psycopg2.extras
+import os
+from dotenv import load_dotenv
+from utils import get_next_it_owner_id, generate_ticket_uuid, generate_ticket_tag
+from flask_cors import CORS
+
+# Load environment variables
+load_dotenv()
+
+app = Flask(__name__)
+CORS(app)
+
+
+# Database configuration
+db_config = {
+    "host": os.getenv("POSTGRES_HOST"),
+    "user": os.getenv("POSTGRES_USER"),
+    "password": os.getenv("POSTGRES_PASSWORD"),
+    "database": os.getenv("POSTGRES_DB"),
+}
+
+print(db_config)
+
+
+def get_db_connection():
+    try:
+        conn = psycopg2.connect(
+            host=db_config["host"],
+            user=db_config["user"],
+            password=db_config["password"],
+            dbname=db_config["database"],
+        )
+        return conn
+    except Error as e:
+        print(f"Error connecting to the database: {e}")
+        return None
+
+
+@app.route("/tickets", methods=["POST"])
+def create_ticket():
+    print("Creating ticket")
+    try:
+        data = request.json
+        required_fields = [
+            "title",
+            "status",
+            "priority",
+            "category",
+            "created_at",
+            "updated_at",
+            "description",
+            "raw_text",
+            "requesting_user_id",
+        ]
+
+        # Validate required fields
+        if not all(field in data for field in required_fields):
+            return jsonify({"error": "Missing required fields"}), 400
+
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        insert_query = """
+        INSERT INTO tickets (ticket_uuid, ticket_tag, title, status, priority, category, created_at, updated_at, description, raw_text, requesting_user_id, it_owner_id)
+        VALUES (%(ticket_uuid)s, %(ticket_tag)s, %(title)s, %(status)s, %(priority)s, %(category)s, %(created_at)s, %(updated_at)s, %(description)s, %(raw_text)s, %(requesting_user_id)s, %(it_owner_id)s)
+        """
+
+        # Set other Values
+        it_owner_id = get_next_it_owner_id()
+        data["it_owner_id"] = it_owner_id
+
+        ticket_uuid = generate_ticket_uuid()
+        data["ticket_uuid"] = ticket_uuid
+
+        ticket_tag = generate_ticket_tag()
+        data["ticket_tag"] = ticket_tag
+
+        # Generate a unique ticket_id
+        cursor.execute(insert_query, data)
+        conn.commit()
+
+        # Get the inserted ticket
+        cursor.execute("SELECT * FROM tickets WHERE ticket_uuid = %s", (ticket_uuid,))
+        new_ticket = cursor.fetchone()
+
+        return (
+            jsonify({"message": "Ticket created successfully", "ticket": new_ticket}),
+            201,
+        )
+
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if "conn" in locals() and conn.is_connected():
+            cursor.close()
+            conn.close()
+
+
+@app.route("/tickets", methods=["GET"])
+def get_all_tickets():
+    print("Getting all tickets")
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cursor.execute("SELECT * FROM tickets")
+        tickets = cursor.fetchall()
+
+        # Convert the result to a list of dictionaries
+        tickets_list = [dict(row) for row in tickets]
+
+        return jsonify(tickets_list), 200
+
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+
+@app.route("/tickets/it/<int:it_owner_id>", methods=["GET"])
+def get_tickets_by_owner(it_owner_id):
+    print(f"Getting tickets for IT owner ID: {it_owner_id}")
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        cursor.execute("SELECT * FROM tickets WHERE it_owner_id = %s", (it_owner_id,))
+        tickets = cursor.fetchall()
+
+        # Convert the result to a list of dictionaries
+        tickets_list = [dict(row) for row in tickets]
+
+        return jsonify(tickets_list), 200
+
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+
+@app.route("/chats/<ticket_uuid>", methods=["GET"])
+def get_chats_by_ticket_uuid(ticket_uuid):
+    print(f"Getting chats for ticket UUID: {ticket_uuid}")
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        cursor.execute("SELECT * FROM chats WHERE ticket_uuid = %s", (ticket_uuid,))
+        chats = cursor.fetchall()
+
+        # Convert the result to a list of dictionaries
+        chats_list = [dict(row) for row in chats]
+
+        return jsonify(chats_list), 200
+
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+
+@app.route("/users/<user_uuid>", methods=["GET"])
+def get_user_by_uuid(user_uuid):
+    print(f"Getting user for UUID: {user_uuid}")
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        cursor.execute("SELECT * FROM users WHERE user_uuid = %s", (user_uuid,))
+        user = cursor.fetchone()
+
+        # Convert the result to a dictionary
+        user_dict = dict(user)
+
+        return jsonify(user_dict), 200
+
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
