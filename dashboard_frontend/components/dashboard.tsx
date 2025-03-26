@@ -2,14 +2,15 @@
 
 import { useState } from "react"
 import { AppSidebar } from "./app-sidebar"
-import TicketsList, { Ticket } from "./tickets-list"
+import TicketsList from "./tickets-list"
 import TicketDetail from "./ticket-detail"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { TicketInterface } from "@/types/servalTypes"
 
 export default function Dashboard() {
-  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null)
+  const [selectedTicket, setSelectedTicket] = useState<TicketInterface | null>(null)
 
-  const handleSelectTicket = (ticket: Ticket) => {
+  const handleSelectTicket = (ticket: TicketInterface) => {
     console.log("Selected ticket:", ticket)
     setSelectedTicket(ticket)
   }

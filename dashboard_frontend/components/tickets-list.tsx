@@ -5,8 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter, Clock, Tag } from "lucide-react"
-
+import { Search, Filter, Clock, Tag, Ticket } from "lucide-react"
+import { TicketInterface } from "@/types/servalTypes"
 // Mock data for tickets
 const tickets = [
   {
@@ -67,31 +67,31 @@ const tickets = [
   },
 ]
 
-export interface Ticket {
-  ticket_uuid: string
-  ticket_tag: string
-  title: string
-  status: string
-  priority: string
-  category: string
-  created_at: string
-  updated_at: string
-  description: string
-  raw_text: string
-  requesting_user_uuid: string
-  it_owner_uuid: string
-  department: string
-}
+// export interface Ticket {
+//   ticket_uuid: string
+//   ticket_tag: string
+//   title: string
+//   status: string
+//   priority: string
+//   category: string
+//   created_at: string
+//   updated_at: string
+//   description: string
+//   raw_text: string
+//   requesting_user_uuid: string
+//   it_owner_uuid: string
+//   department: string
+// }
 
 interface TicketsListProps {
-  onSelectTicket: (ticket: Ticket) => void
+  onSelectTicket: (ticket: TicketInterface) => void
 }
 
 export default function TicketsList({ onSelectTicket }: TicketsListProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [priorityFilter, setPriorityFilter] = useState("all")
-  const [tickets, setTickets] = useState<Ticket[]>([])
+  const [tickets, setTickets] = useState<TicketInterface[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
