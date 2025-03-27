@@ -13,3 +13,7 @@ def generate_ticket_uuid():
 
 def generate_ticket_tag():
     return "TICKET-" + str(uuid.uuid4())
+
+
+def generate_message_uuid():
+    return str(uuid.uuid4())

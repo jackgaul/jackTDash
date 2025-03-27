@@ -3,53 +3,61 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { toast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import { ChatSection } from "./chatComponent"
 import { TicketInterface, ChatInterface, UserInterface } from "@/types/servalTypes"
 import { TicketDetailsPanel } from "./ticketDetailsPanel"
+import { fetchChats, fetchUser, submitChatMessage } from "@/api/ticketService"
 
 
 interface TicketDetailProps {
   ticket: TicketInterface
   onBack: () => void
+  userLoggedIn: UserInterface
 }
 
-export default function TicketDetail({ ticket: selectedTicket, onBack }: TicketDetailProps) {
+export default function TicketDetail({ ticket: selectedTicket, onBack, userLoggedIn }: TicketDetailProps) {
   const [status, setStatus] = useState("")
   const [priority, setPriority] = useState("")
   const [chats, setChats] = useState<ChatInterface[] | null>(null)
   const [requester, setRequester] = useState<UserInterface | null>(null)
   const [assignedTo, setAssignedTo] = useState<UserInterface | null>(null)
 
+  useEffect(() => {
+    if (selectedTicket) {
+      setStatus(selectedTicket.status)
+      setPriority(selectedTicket.priority)
+    }
+  }, [selectedTicket])
+
   // Use useEffect to set initial state values
   useEffect(() => {
 
-    const fetchChats = async () => {
-      const response = await fetch(`http://127.0.0.1:5000/chats/${selectedTicket.ticket_uuid}`)
-      const data = await response.json()
-      setChats(data)
+    const loadData = async () => {
+
+      try {
+        const chatsData = await fetchChats(selectedTicket.ticket_uuid)
+        setChats(chatsData)
+
+        const requesterData = await fetchUser(selectedTicket.requesting_user_uuid)
+        setRequester(requesterData)
+
+        const assignedToData = await fetchUser(selectedTicket.it_owner_uuid)
+        setAssignedTo(assignedToData)
+
+      } catch (error) {
+        console.error("Error loading data:", error)
+        toast({
+          title: "Error loading data",
+          description: "Please try again later",
+          variant: "destructive",
+        })
+      }
     }
 
-    const fetchRequester = async () => {
-      const response = await fetch(`http://127.0.0.1:5000/users/${selectedTicket.requesting_user_uuid}`)
-      const data = await response.json()
-      setRequester(data)
-    }
-
-    const fetchAssignedTo = async () => {
-      const response = await fetch(`http://127.0.0.1:5000/users/${selectedTicket.it_owner_uuid}`)
-      const data = await response.json()
-      setAssignedTo(data)
-    }
-
-    //fetchTicket()
-    fetchChats()
-    fetchRequester()
-    fetchAssignedTo()
-    setStatus(selectedTicket.status)
-    setPriority(selectedTicket.priority)
-
+    loadData()
   }, [selectedTicket])
 
   if (!selectedTicket) {
@@ -107,11 +115,33 @@ export default function TicketDetail({ ticket: selectedTicket, onBack }: TicketD
     }).format(date)
   }
 
-  const handleSubmitComment = (message: string, isInternal: boolean) => {
-    if (message.trim()) {
-      // TODO: Send the comment to an API
-      alert(`Comment submitted: ${message} (Internal: ${isInternal})`)
+  const handleSubmitComment = async (message: string, isInternal: boolean) => {
+    if (!message.trim()) return
+    // TODO: Send the comment to an API
+    try {
+      const newChat = await submitChatMessage(
+        selectedTicket.ticket_uuid,
+        message,
+        isInternal,
+        userLoggedIn
+      )
+
+      setChats(prev => prev ? [...prev, newChat] : [newChat])
+
+      toast({
+        title: "Comment submitted",
+        description: "Your comment has been added to the ticket",
+      })
+
+    } catch (error) {
+      console.error("Error submitting comment:", error)
+      toast({
+        title: "Error submitting comment",
+        description: "Please try again later",
+        variant: "destructive",
+      })
     }
+
   }
 
   const handleStatusChange = (newStatus: string) => {
@@ -158,6 +188,7 @@ export default function TicketDetail({ ticket: selectedTicket, onBack }: TicketD
               chats={chats}
               ticketUuid={selectedTicket.ticket_uuid}
               onSubmitComment={handleSubmitComment}
+              chatTitle="Comments & Activity"
             />
           </div>
           <TicketDetailsPanel

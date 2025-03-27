@@ -4,8 +4,14 @@ from psycopg2 import Error
 import psycopg2.extras
 import os
 from dotenv import load_dotenv
-from utils import get_next_it_owner_id, generate_ticket_uuid, generate_ticket_tag
+from utils import (
+    get_next_it_owner_id,
+    generate_ticket_uuid,
+    generate_ticket_tag,
+    generate_message_uuid,
+)
 from flask_cors import CORS
+from datetime import datetime
 
 # Load environment variables
 load_dotenv()
@@ -166,6 +172,58 @@ def get_chats_by_ticket_uuid(ticket_uuid):
         chats_list = [dict(row) for row in chats]
 
         return jsonify(chats_list), 200
+
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+
+@app.route("/chats/<ticket_uuid>", methods=["POST"])
+def create_chat(ticket_uuid):
+    print(f"Creating chat for ticket UUID: {ticket_uuid}")
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        data = request.json
+        required_fields = [
+            "message",
+            "author_uuid",
+            "author_name",
+            "author_role",
+            "is_internal",
+        ]
+
+        created_at = datetime.now().isoformat()
+        message_uuid = generate_message_uuid()
+        data["message_uuid"] = message_uuid
+        data["created_at"] = created_at
+        data["ticket_uuid"] = ticket_uuid
+        if not all(field in data for field in required_fields):
+            return jsonify({"error": "Missing required fields"}), 400
+
+        cursor.execute(
+            "INSERT INTO chats (message_uuid, ticket_uuid, created_at, author_uuid, message, author_name, author_role, is_internal) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+            (
+                data["message_uuid"],
+                data["ticket_uuid"],
+                data["created_at"],
+                data["author_uuid"],
+                data["message"],
+                data["author_name"],
+                data["author_role"],
+                data["is_internal"],
+            ),
+        )
+        conn.commit()
+
+        return jsonify(data), 201
 
     except Error as e:
         return jsonify({"error": str(e)}), 500

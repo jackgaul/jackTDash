@@ -89,10 +89,10 @@ def main():
     """
     cur.execute(create_table_sql)
 
-    my_user_id = str(uuid.uuid4())
+    my_user_id = "b87ab50f-e199-42a1-a257-cc4216e896c0"
     serval_user_id = str(uuid.uuid4())
     john_user_id = str(uuid.uuid4())
-    user_ids = [str(uuid.uuid4()) for _ in range(6)]
+    user_ids = [str(uuid.uuid4()) for _ in range(3)]
     first_ticket_uuid = "e0ff03cb-8e8b-42fb-9f92-e7fe98f80722"
     # 5) Prepare a list of ticket dictionaries
     tickets = [
@@ -127,7 +127,7 @@ def main():
                 "SCCM reporting 23 workstations in Marketing department failed to receive latest "
                 "security patches. Error code 0x80070002 appearing in logs. Potential security risk."
             ),
-            "requesting_user_uuid": user_ids[random.randint(0, len(user_ids) - 1)],
+            "requesting_user_uuid": user_ids[0],
             "department": "Marketing",
             "it_owner_uuid": my_user_id,
         },
@@ -145,7 +145,7 @@ def main():
                 "Switch SW-3F-CORE-01 reporting multiple interface errors. Affecting approximately "
                 "50 users on floor 3. Redundant path active but operating at reduced capacity."
             ),
-            "requesting_user_uuid": user_ids[random.randint(0, len(user_ids) - 1)],
+            "requesting_user_uuid": user_ids[1],
             "department": "IT",
             "it_owner_uuid": my_user_id,
         },
@@ -163,7 +163,7 @@ def main():
                 "Multiple users reported inability to send or receive emails. System-wide email "
                 "outage affecting all departments. Requires immediate attention."
             ),
-            "requesting_user_uuid": user_ids[random.randint(0, len(user_ids) - 1)],
+            "requesting_user_uuid": user_ids[2],
             "department": "Marketing",
             "it_owner_uuid": my_user_id,
         },
@@ -181,7 +181,7 @@ def main():
                 "Remote team members reporting frequent VPN drops. Issue appears to be affecting "
                 "multiple geographic locations. Connection stability varies throughout the day."
             ),
-            "requesting_user_uuid": user_ids[random.randint(0, len(user_ids) - 1)],
+            "requesting_user_uuid": user_ids[0],
             "department": "IT",
             "it_owner_uuid": my_user_id,
         },
@@ -199,193 +199,8 @@ def main():
                 "Marketing team needs full Adobe Creative Suite installed. Licenses already purchased. "
                 "Workstations identified: MKT-001 through MKT-005."
             ),
-            "requesting_user_uuid": user_ids[random.randint(0, len(user_ids) - 1)],
+            "requesting_user_uuid": user_ids[1],
             "department": "Marketing",
-            "it_owner_uuid": my_user_id,
-        },
-        {
-            "ticket_uuid": str(uuid.uuid4()),
-            "ticket_tag": "TICKET-1007",
-            "title": "Printer not responding",
-            "status": "open",
-            "priority": "medium",
-            "category": "Hardware",
-            "created_at": "2023-04-10 08:30:00",
-            "updated_at": "2023-04-10 08:30:00",
-            "description": "Main office printer is not responding to print jobs.",
-            "raw_text": (
-                "Main printer (HP-MFP-2024) in building A not accepting print jobs. Print queue shows "
-                "jobs but nothing printing. No error messages on printer display."
-            ),
-            "requesting_user_uuid": user_ids[random.randint(0, len(user_ids) - 1)],
-            "department": "Sales",
-            "it_owner_uuid": my_user_id,
-        },
-        {
-            "ticket_uuid": str(uuid.uuid4()),
-            "ticket_tag": "TICKET-1008",
-            "title": "Password reset request",
-            "status": "closed",
-            "priority": "low",
-            "category": "Account",
-            "created_at": "2023-04-09 14:00:00",
-            "updated_at": "2023-04-09 14:15:00",
-            "description": "User requesting password reset for their account.",
-            "raw_text": (
-                "Standard password reset request. User verified through secondary authentication. "
-                "Reset completed successfully."
-            ),
-            "requesting_user_uuid": user_ids[random.randint(0, len(user_ids) - 1)],
-            "department": "Sales",
-            "it_owner_uuid": my_user_id,
-        },
-        {
-            "ticket_uuid": str(uuid.uuid4()),
-            "ticket_tag": "TICKET-1009",
-            "title": "Server maintenance notification",
-            "status": "in-progress",
-            "priority": "high",
-            "category": "Server",
-            "created_at": "2023-04-07 16:20:00",
-            "updated_at": "2023-04-10 11:45:00",
-            "description": "Scheduled server maintenance notification to all departments.",
-            "raw_text": (
-                "Planned maintenance window for primary application servers. Includes security patches "
-                "and system updates. Expected downtime: 4 hours."
-            ),
-            "requesting_user_uuid": user_ids[random.randint(0, len(user_ids) - 1)],
-            "department": "Sales",
-            "it_owner_uuid": my_user_id,
-        },
-        {
-            "ticket_uuid": str(uuid.uuid4()),
-            "ticket_tag": "TICKET-1010",
-            "title": "New employee onboarding",
-            "status": "pending",
-            "priority": "medium",
-            "category": "HR",
-            "created_at": "2023-04-06 10:30:00",
-            "updated_at": "2023-04-08 15:20:00",
-            "description": "Setup workstation and accounts for new employee starting next week.",
-            "raw_text": (
-                "New hire starting in Marketing department. Needs standard software suite, email "
-                "account, VPN access, and building access card. Equipment requisition submitted."
-            ),
-            "requesting_user_uuid": user_ids[random.randint(0, len(user_ids) - 1)],
-            "department": "HR",
-            "it_owner_uuid": my_user_id,
-        },
-        {
-            "ticket_uuid": str(uuid.uuid4()),
-            "ticket_tag": "TICKET-1011",
-            "title": "Slack integration broken",
-            "status": "open",
-            "priority": "high",
-            "category": "Slack",
-            "created_at": "2023-04-11 10:15:00",
-            "updated_at": "2023-04-11 10:45:00",
-            "description": "GitHub notifications not appearing in dev-alerts channel",
-            "raw_text": (
-                "GitHub to Slack integration stopped working. No notifications appearing in "
-                "#dev-alerts channel since 09:30 AM. Development team workflow impacted. "
-                "Webhook logs show connection timeouts."
-            ),
-            "requesting_user_uuid": user_ids[random.randint(0, len(user_ids) - 1)],
-            "department": "Sales",
-            "it_owner_uuid": my_user_id,
-        },
-        {
-            "ticket_uuid": str(uuid.uuid4()),
-            "ticket_tag": "TICKET-1012",
-            "title": "Zoom room system offline",
-            "status": "open",
-            "priority": "high",
-            "category": "Zoom",
-            "created_at": "2023-04-11 09:00:00",
-            "updated_at": "2023-04-11 09:30:00",
-            "description": "Main conference room Zoom system unresponsive",
-            "raw_text": (
-                "Conference Room A Zoom system showing black screen. Multiple failed attempts "
-                "to restart. Three scheduled meetings impacted. Room calendar shows full booking "
-                "for today."
-            ),
-            "requesting_user_uuid": user_ids[random.randint(0, len(user_ids) - 1)],
-            "department": "Sales",
-            "it_owner_uuid": my_user_id,
-        },
-        {
-            "ticket_uuid": str(uuid.uuid4()),
-            "ticket_tag": "TICKET-1013",
-            "title": "Google Drive sync failing",
-            "status": "in-progress",
-            "priority": "medium",
-            "category": "Google Workspace",
-            "created_at": "2023-04-11 08:45:00",
-            "updated_at": "2023-04-11 10:00:00",
-            "description": "Marketing team unable to sync shared drive",
-            "raw_text": (
-                'Marketing shared drive not syncing for team members. Files showing as "offline only". '
-                "Network connectivity verified. Affects 12 team members working on current campaign "
-                "materials."
-            ),
-            "requesting_user_uuid": user_ids[random.randint(0, len(user_ids) - 1)],
-            "department": "Marketing",
-            "it_owner_uuid": my_user_id,
-        },
-        {
-            "ticket_uuid": str(uuid.uuid4()),
-            "ticket_tag": "TICKET-1014",
-            "title": "Slack calls dropping",
-            "status": "open",
-            "priority": "medium",
-            "category": "Slack",
-            "created_at": "2023-04-11 11:00:00",
-            "updated_at": "2023-04-11 11:15:00",
-            "description": "Users reporting frequent disconnections during Slack calls",
-            "raw_text": (
-                "Multiple reports of audio dropping and call disconnections in Slack. Issue appears "
-                "network independent. Affects both desktop and mobile users. Started after recent "
-                "Slack update."
-            ),
-            "requesting_user_uuid": user_ids[random.randint(0, len(user_ids) - 1)],
-            "department": "Marketing",
-            "it_owner_uuid": my_user_id,
-        },
-        {
-            "ticket_uuid": str(uuid.uuid4()),
-            "ticket_tag": "TICKET-1015",
-            "title": "Google Calendar sync delay",
-            "status": "pending",
-            "priority": "low",
-            "category": "Google Workspace",
-            "created_at": "2023-04-11 10:30:00",
-            "updated_at": "2023-04-11 10:45:00",
-            "description": "Calendar updates taking 30+ minutes to sync across devices",
-            "raw_text": (
-                "Users reporting significant delays in calendar updates appearing across devices. "
-                "Meeting invites not showing up immediately. No Google Workspace service "
-                "disruptions reported."
-            ),
-            "requesting_user_uuid": user_ids[random.randint(0, len(user_ids) - 1)],
-            "department": "Marketing",
-            "it_owner_uuid": my_user_id,
-        },
-        {
-            "ticket_uuid": str(uuid.uuid4()),
-            "ticket_tag": "TICKET-1016",
-            "title": "Zoom SSO authentication failed",
-            "status": "open",
-            "priority": "high",
-            "category": "Zoom",
-            "created_at": "2023-04-11 11:30:00",
-            "updated_at": "2023-04-11 11:45:00",
-            "description": "Unable to login to Zoom using company SSO",
-            "raw_text": (
-                'Company-wide issue with Zoom SSO authentication. Users getting "Authentication Failed" '
-                "errors. Affecting all new login attempts. SSO working for other services."
-            ),
-            "requesting_user_uuid": user_ids[random.randint(0, len(user_ids) - 1)],
-            "department": "IT",
             "it_owner_uuid": my_user_id,
         },
     ]
@@ -417,9 +232,9 @@ def main():
         message_uuid UUID PRIMARY KEY,
         ticket_uuid UUID NOT NULL,
         created_at TIMESTAMP NOT NULL,
-        user_uuid UUID,
+        author_uuid UUID,
         message TEXT,
-        author VARCHAR(255),
+        author_name VARCHAR(255),
         author_role VARCHAR(255),
         is_internal BOOLEAN DEFAULT FALSE
     );
@@ -431,9 +246,9 @@ def main():
             "message_uuid": str(uuid.uuid4()),
             "ticket_uuid": tickets[0]["ticket_uuid"],
             "created_at": "2023-04-11 03:15:00",
-            "user_uuid": john_user_id,
+            "author_uuid": john_user_id,
             "message": "Hey can you create a new Slack channel for the marketing department named #marketing-alerts and invite all members of the marketing department to the channel?",
-            "author": "John Doe",
+            "author_name": "John Doe",
             "author_role": "Marketing Manager",
             "is_internal": False,
         },
@@ -441,9 +256,9 @@ def main():
             "message_uuid": str(uuid.uuid4()),
             "ticket_uuid": tickets[0]["ticket_uuid"],
             "created_at": "2023-04-11 03:15:10",
-            "user_uuid": my_user_id,
+            "author_uuid": my_user_id,
             "message": "Hey Serval, Create a new Slack channel for the marketing department named #marketing-alerts and invite all members of the marketing department to the channel.",
-            "author": "Jack",
+            "author_name": "Jack",
             "author_role": "IT Manager",
             "is_internal": True,
         },
@@ -451,9 +266,9 @@ def main():
             "message_uuid": str(uuid.uuid4()),
             "ticket_uuid": tickets[0]["ticket_uuid"],
             "created_at": "2023-04-11 03:15:15",
-            "user_uuid": serval_user_id,
+            "author_uuid": serval_user_id,
             "message": "Sure, I can do that. I'll create the channel and invite the members.",
-            "author": "Serval",
+            "author_name": "Serval",
             "author_role": "CoPilot",
             "is_internal": True,
         },
@@ -461,9 +276,9 @@ def main():
             "message_uuid": str(uuid.uuid4()),
             "ticket_uuid": tickets[0]["ticket_uuid"],
             "created_at": "2023-04-11 03:15:20",
-            "user_uuid": serval_user_id,
+            "author_uuid": serval_user_id,
             "message": "I've created the channel and invited the members. Ill let John know.",
-            "author": "Serval",
+            "author_name": "Serval",
             "author_role": "CoPilot",
             "is_internal": True,
         },
@@ -471,9 +286,9 @@ def main():
             "message_uuid": str(uuid.uuid4()),
             "ticket_uuid": tickets[0]["ticket_uuid"],
             "created_at": "2023-04-11 03:15:25",
-            "user_uuid": serval_user_id,
+            "author_uuid": serval_user_id,
             "message": "Hey John, I've created the channel and invited the members.",
-            "author": "Serval",
+            "author_name": "Serval",
             "author_role": "CoPilot",
             "is_internal": False,
         },
@@ -481,9 +296,9 @@ def main():
             "message_uuid": str(uuid.uuid4()),
             "ticket_uuid": tickets[0]["ticket_uuid"],
             "created_at": "2023-04-11 03:15:30",
-            "user_uuid": john_user_id,
+            "author_uuid": john_user_id,
             "message": "Hey Serval, thanks for the help.",
-            "author": "John Doe",
+            "author_name": "John Doe",
             "author_role": "Marketing Manager",
             "is_internal": False,
         },
@@ -491,10 +306,10 @@ def main():
 
     insert_chat_data_sql = """
     INSERT INTO chats (
-        message_uuid, ticket_uuid, created_at, user_uuid, message, author, author_role, is_internal
+        message_uuid, ticket_uuid, created_at, author_uuid, message, author_name, author_role, is_internal
     )
     VALUES (
-        %(message_uuid)s, %(ticket_uuid)s, %(created_at)s, %(user_uuid)s, %(message)s, %(author)s, %(author_role)s, %(is_internal)s
+        %(message_uuid)s, %(ticket_uuid)s, %(created_at)s, %(author_uuid)s, %(message)s, %(author_name)s, %(author_role)s, %(is_internal)s
     )"""
     cur.executemany(insert_chat_data_sql, chats)
 
@@ -507,7 +322,8 @@ def main():
     create_users_table_sql = """
     CREATE TABLE users (
         user_uuid UUID PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
+        first_name VARCHAR(255) NOT NULL,
+        last_name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
         role VARCHAR(255) NOT NULL
     );
@@ -517,21 +333,43 @@ def main():
     users = [
         {
             "user_uuid": john_user_id,
-            "name": "John Doe",
+            "first_name": "John",
+            "last_name": "Doe",
             "email": "john.doe@example.com",
             "role": "Marketing Manager",
         },
         {
             "user_uuid": my_user_id,
-            "name": "Jack",
+            "first_name": "Jack",
+            "last_name": "Gaul",
             "email": "jack@example.com",
             "role": "IT Manager",
         },
+        {
+            "user_uuid": user_ids[0],
+            "first_name": "Jess",
+            "last_name": "Hanson",
+            "email": "jess@example.com",
+            "role": "Marketing Manager",
+        },
+        {
+            "user_uuid": user_ids[1],
+            "first_name": "James",
+            "last_name": "Jacob",
+            "email": "james@example.com",
+            "role": "Sales Manager",
+        },
+        {
+            "user_uuid": user_ids[2],
+            "first_name": "Max",
+            "last_name": "Bauer",
+            "email": "max@example.com",
+            "role": "Engineering Manager",
+        },
     ]
-
     insert_users_data_sql = """
-    INSERT INTO users (user_uuid, name, email, role)
-    VALUES (%(user_uuid)s, %(name)s, %(email)s, %(role)s)
+    INSERT INTO users (user_uuid, first_name, last_name, email, role)
+    VALUES (%(user_uuid)s, %(first_name)s, %(last_name)s, %(email)s, %(role)s)
     """
     cur.executemany(insert_users_data_sql, users)
 

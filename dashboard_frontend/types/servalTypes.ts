@@ -17,16 +17,18 @@ export interface TicketInterface {
 export interface ChatInterface {
     message_uuid: string
     ticket_uuid: string
-    message: string
     created_at: string
-    author: string
+    author_uuid: string
+    message: string
+    author_name: string
     author_role: string
     is_internal: boolean
 }
 
 export interface UserInterface {
     user_uuid: string
-    name: string
+    first_name: string
+    last_name: string
     email: string
     role: string
 }

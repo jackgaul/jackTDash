@@ -19,8 +19,13 @@ import {
   SidebarSeparator,
   SidebarInput,
 } from "@/components/ui/sidebar"
+import { UserInterface } from "@/types/servalTypes"
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  userLoggedIn: UserInterface
+}
+
+export function AppSidebar({ userLoggedIn }: AppSidebarProps) {
   return (
     <Sidebar className="border-r">
       <SidebarHeader className="flex items-center px-4 py-2">
@@ -51,9 +56,9 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="My Requests" isActive>
+                <SidebarMenuButton tooltip="My Tickets" isActive>
                   <ClipboardList className="h-5 w-5" />
-                  <span>My Requests</span>
+                  <span>My Tickets</span>
                 </SidebarMenuButton>
                 <SidebarMenuBadge>12</SidebarMenuBadge>
               </SidebarMenuItem>
@@ -106,8 +111,8 @@ export function AppSidebar() {
             <AvatarFallback>JD</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
-            <span className="text-sm font-medium">John Doe</span>
-            <span className="text-xs text-muted-foreground">IT Support</span>
+            <span className="text-sm font-medium">{userLoggedIn.first_name} {userLoggedIn.last_name}</span>
+            <span className="text-xs text-muted-foreground">{userLoggedIn.role}</span>
           </div>
         </div>
       </SidebarFooter>

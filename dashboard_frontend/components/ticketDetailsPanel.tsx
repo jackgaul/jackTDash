@@ -83,13 +83,10 @@ export function TicketDetailsPanel({
                             <Avatar className="h-6 w-6">
                                 <AvatarImage src="/placeholder-user.jpg" />
                                 <AvatarFallback>
-                                    {requester?.name
-                                        .split(" ")
-                                        .map((n) => n[0])
-                                        .join("")}
+                                    {requester ? `${requester.first_name[0]}${requester.last_name[0]}` : ""}
                                 </AvatarFallback>
                             </Avatar>
-                            <span className="text-sm">{requester?.name}</span>
+                            <span className="text-sm">{requester?.first_name + " " + requester?.last_name}</span>
                         </div>
                     </div>
 
@@ -101,13 +98,10 @@ export function TicketDetailsPanel({
                             <Avatar className="h-6 w-6">
                                 <AvatarImage src="/placeholder-user.jpg" />
                                 <AvatarFallback>
-                                    {assignedTo?.name
-                                        .split(" ")
-                                        .map((n) => n[0])
-                                        .join("")}
+                                    {assignedTo ? `${assignedTo.first_name[0]}${assignedTo.last_name[0]}` : ""}
                                 </AvatarFallback>
                             </Avatar>
-                            <span className="text-sm">{assignedTo?.name}</span>
+                            <span className="text-sm">{assignedTo?.first_name + " " + assignedTo?.last_name}</span>
                         </div>
                     </div>
 

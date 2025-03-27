@@ -7,23 +7,16 @@ import { Textarea } from "@/components/ui/textarea"
 import { MessageSquare, Paperclip } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ChatInterface } from "@/types/servalTypes"
-// interface Chat {
-//     message_uuid: string
-//     ticket_uuid: string
-//     message: string
-//     created_at: string
-//     author: string
-//     author_role: string
-//     is_internal: boolean
-// }
+
 
 interface ChatSectionProps {
     chats: ChatInterface[] | null
     ticketUuid: string
     onSubmitComment: (comment: string, isInternal: boolean) => void
+    chatTitle: string
 }
 
-export function ChatSection({ chats, ticketUuid, onSubmitComment }: ChatSectionProps) {
+export function ChatSection({ chats, ticketUuid, onSubmitComment, chatTitle }: ChatSectionProps) {
     const [newComment, setNewComment] = useState("")
     const [isInternalNote, setIsInternalNote] = useState(false)
 
@@ -49,7 +42,7 @@ export function ChatSection({ chats, ticketUuid, onSubmitComment }: ChatSectionP
     return (
         <div>
             <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-medium">Comments & Activity</h3>
+                <h3 className="text-lg font-medium">{chatTitle}</h3>
                 <Badge variant="outline" className="font-normal">
                     {chats?.length || 0} entries
                 </Badge>
@@ -64,11 +57,11 @@ export function ChatSection({ chats, ticketUuid, onSubmitComment }: ChatSectionP
                         >
                             <div className="flex items-start gap-3">
                                 <Avatar className="h-8 w-8">
-                                    <AvatarImage src={chat.author === "Serval" ? "" : "/placeholder-user.jpg"} />
+                                    <AvatarImage src={chat.author_name === "Serval" ? "" : "/placeholder-user.jpg"} />
                                     <AvatarFallback>
-                                        {chat.author === "Serval"
+                                        {chat.author_name === "Serval"
                                             ? "SER"
-                                            : chat.author
+                                            : chat.author_name
                                                 .split(" ")
                                                 .map((n) => n[0])
                                                 .join("")}
@@ -77,7 +70,7 @@ export function ChatSection({ chats, ticketUuid, onSubmitComment }: ChatSectionP
                                 <div className="flex-1">
                                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1">
                                         <div>
-                                            <span className="font-medium">{chat.author}</span>
+                                            <span className="font-medium">{chat.author_name}</span>
                                             <span className="text-xs text-muted-foreground ml-2">{chat.author_role}</span>
                                         </div>
                                         <span className="text-xs text-muted-foreground">{formatDate(chat.created_at)}</span>

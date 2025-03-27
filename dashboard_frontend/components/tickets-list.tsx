@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Filter, Clock, Tag, Ticket } from "lucide-react"
-import { TicketInterface } from "@/types/servalTypes"
+import { TicketInterface, UserInterface } from "@/types/servalTypes"
 // Mock data for tickets
 const tickets = [
   {
@@ -67,27 +67,14 @@ const tickets = [
   },
 ]
 
-// export interface Ticket {
-//   ticket_uuid: string
-//   ticket_tag: string
-//   title: string
-//   status: string
-//   priority: string
-//   category: string
-//   created_at: string
-//   updated_at: string
-//   description: string
-//   raw_text: string
-//   requesting_user_uuid: string
-//   it_owner_uuid: string
-//   department: string
-// }
+
 
 interface TicketsListProps {
   onSelectTicket: (ticket: TicketInterface) => void
+  userLoggedIn: UserInterface
 }
 
-export default function TicketsList({ onSelectTicket }: TicketsListProps) {
+export default function TicketsList({ onSelectTicket, userLoggedIn }: TicketsListProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [priorityFilter, setPriorityFilter] = useState("all")
