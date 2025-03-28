@@ -19,13 +19,14 @@ import {
   SidebarSeparator,
   SidebarInput,
 } from "@/components/ui/sidebar"
-import { UserInterface } from "@/types/servalTypes"
+import { UserInterface } from "@/typesNdefs/servalTypes"
 
 interface AppSidebarProps {
   userLoggedIn: UserInterface
+  onPageClick: (page: "TicketList" | "TicketDetail" | "ServalChat") => void
 }
 
-export function AppSidebar({ userLoggedIn }: AppSidebarProps) {
+export function AppSidebar({ userLoggedIn, onPageClick }: AppSidebarProps) {
   return (
     <Sidebar className="border-r">
       <SidebarHeader className="flex items-center px-4 py-2">
@@ -56,11 +57,11 @@ export function AppSidebar({ userLoggedIn }: AppSidebarProps) {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="My Tickets" isActive>
+                <SidebarMenuButton tooltip="My Tickets" isActive={true} onClick={() => onPageClick("TicketList")}>
                   <ClipboardList className="h-5 w-5" />
                   <span>My Tickets</span>
                 </SidebarMenuButton>
-                <SidebarMenuBadge>12</SidebarMenuBadge>
+
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Create Ticket">
@@ -69,7 +70,7 @@ export function AppSidebar({ userLoggedIn }: AppSidebarProps) {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Serval Chat">
+                <SidebarMenuButton tooltip="Serval Chat" onClick={() => onPageClick("ServalChat")}>
                   <MessageSquare className="h-5 w-5" />
                   <span>Serval Chat</span>
                 </SidebarMenuButton>

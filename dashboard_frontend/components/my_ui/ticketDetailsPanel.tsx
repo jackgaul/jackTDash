@@ -5,33 +5,31 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { TicketInterface, UserInterface } from "@/types/servalTypes"
+import { TicketInterface, UserInterface } from "@/typesNdefs/servalTypes"
 import { AlertTriangle, Clock, MessageSquare, Paperclip, Tag, User } from "lucide-react"
 
 interface TicketDetailsPanelProps {
     ticket: TicketInterface
     requester: UserInterface | null
     assignedTo: UserInterface | null
-    status: string
-    priority: string
     onStatusChange: (status: string) => void
     onPriorityChange: (priority: string) => void
     formatDate: (dateString: string) => string
     getStatusColor: (status: string) => string
     getPriorityColor: (priority: string) => string
+    onDeleteTicket: () => void
 }
 
 export function TicketDetailsPanel({
     ticket,
     requester,
     assignedTo,
-    status,
-    priority,
     onStatusChange,
     onPriorityChange,
     formatDate,
     getStatusColor,
     getPriorityColor,
+    onDeleteTicket,
 }: TicketDetailsPanelProps) {
     return (
         <div className="space-y-6">
@@ -44,7 +42,7 @@ export function TicketDetailsPanel({
                         <h4 className="text-sm font-medium flex items-center">
                             <Tag className="h-4 w-4 mr-2" /> Status
                         </h4>
-                        <Select value={status} onValueChange={onStatusChange}>
+                        <Select value={ticket.status} onValueChange={onStatusChange}>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select status" />
                             </SelectTrigger>
@@ -61,7 +59,7 @@ export function TicketDetailsPanel({
                         <h4 className="text-sm font-medium flex items-center">
                             <AlertTriangle className="h-4 w-4 mr-2" /> Priority
                         </h4>
-                        <Select value={priority} onValueChange={onPriorityChange}>
+                        <Select value={ticket.priority} onValueChange={onPriorityChange}>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select priority" />
                             </SelectTrigger>
@@ -111,28 +109,28 @@ export function TicketDetailsPanel({
                         <h4 className="text-sm font-medium flex items-center">
                             <Clock className="h-4 w-4 mr-2" /> Created
                         </h4>
-                        <span className="text-sm">{formatDate(ticket.created_at)}</span>
+                        <span className="text-sm">{ticket.created_at == "" ? "Undetermined" : formatDate(ticket.created_at)}</span>
                     </div>
 
                     <div className="space-y-2">
                         <h4 className="text-sm font-medium flex items-center">
                             <Clock className="h-4 w-4 mr-2" /> Updated
                         </h4>
-                        <span className="text-sm">{formatDate(ticket.updated_at)}</span>
+                        <span className="text-sm">{ticket.updated_at == "" ? "Undetermined" : formatDate(ticket.updated_at)}</span>
                     </div>
 
                     <div className="space-y-2">
                         <h4 className="text-sm font-medium flex items-center">
                             <Tag className="h-4 w-4 mr-2" /> Category
                         </h4>
-                        <span className="text-sm">{ticket.category}</span>
+                        <span className="text-sm">{ticket.category == "" ? "Undetermined" : ticket.category}</span>
                     </div>
 
                     <div className="space-y-2">
                         <h4 className="text-sm font-medium flex items-center">
                             <Tag className="h-4 w-4 mr-2" /> Department
                         </h4>
-                        <span className="text-sm">{ticket.department}</span>
+                        <span className="text-sm">{ticket.department == "" ? "Undetermined" : ticket.department}</span>
                     </div>
                 </CardContent>
                 <CardFooter>
@@ -155,6 +153,9 @@ export function TicketDetailsPanel({
                     </Button>
                     <Button variant="outline" className="w-full justify-start text-red-500 hover:text-red-600">
                         <AlertTriangle className="h-4 w-4 mr-2" /> Escalate
+                    </Button>
+                    <Button variant="outline" className="w-full justify-start text-red-500 hover:text-red-600" onClick={() => onDeleteTicket()}>
+                        <AlertTriangle className="h-4 w-4 mr-2" /> Delete
                     </Button>
                 </CardContent>
             </Card>

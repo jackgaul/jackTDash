@@ -6,17 +6,16 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { MessageSquare, Paperclip } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ChatInterface } from "@/types/servalTypes"
+import { ChatInterface } from "@/typesNdefs/servalTypes"
 
 
 interface ChatSectionProps {
     chats: ChatInterface[] | null
-    ticketUuid: string
     onSubmitComment: (comment: string, isInternal: boolean) => void
     chatTitle: string
 }
 
-export function ChatSection({ chats, ticketUuid, onSubmitComment, chatTitle }: ChatSectionProps) {
+export function ChatSection({ chats, onSubmitComment, chatTitle }: ChatSectionProps) {
     const [newComment, setNewComment] = useState("")
     const [isInternalNote, setIsInternalNote] = useState(false)
 

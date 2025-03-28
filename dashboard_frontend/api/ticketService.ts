@@ -1,5 +1,5 @@
 // api/ticketService.ts
-import { ChatInterface, TicketInterface, UserInterface } from "@/types/servalTypes"
+import { ChatInterface, TicketInterface, UserInterface } from "@/typesNdefs/servalTypes"
 
 const API_BASE_URL = "http://127.0.0.1:5000"
 
@@ -106,4 +106,37 @@ export async function updateTicketPriority(
     }
 
     return response.json()
+}
+
+// Delete a ticket
+export async function deleteTicket(ticketUuid: string): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/tickets/${ticketUuid}`, {
+        method: "DELETE",
+    })
+
+    if (!response.ok) {
+        throw new Error(`Error deleting ticket: ${response.statusText}`)
+    }
+
+    return response.json()
+}
+
+// Create a new ticket
+export async function createTicket(ticket: TicketInterface): Promise<TicketInterface> {
+    const response = await fetch(`${API_BASE_URL}/tickets`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(ticket),
+    })
+
+    if (!response.ok) {
+        throw new Error(`Error creating ticket: ${response.statusText}`)
+    }
+    const data = await response.json()
+    const newTicket = data as TicketInterface
+    console.log("ticket created in TicketService", newTicket)
+
+    return data
 }

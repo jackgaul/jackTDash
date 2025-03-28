@@ -6,11 +6,11 @@ import { Badge } from "@/components/ui/badge"
 import { toast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
-import { ChatSection } from "./chatComponent"
-import { TicketInterface, ChatInterface, UserInterface } from "@/types/servalTypes"
-import { TicketDetailsPanel } from "./ticketDetailsPanel"
-import { fetchChats, fetchUser, submitChatMessage } from "@/api/ticketService"
-
+import { ChatSection } from "./my_ui/chatComponent"
+import { TicketInterface, ChatInterface, UserInterface } from "@/typesNdefs/servalTypes"
+import { TicketDetailsPanel } from "./my_ui/ticketDetailsPanel"
+import { fetchChats, fetchUser, submitChatMessage, deleteTicket, updateTicketStatus, updateTicketPriority } from "@/api/ticketService"
+import { getStatusColor, getPriorityColor, formatDate } from "@/typesNdefs/utils"
 
 interface TicketDetailProps {
   ticket: TicketInterface
@@ -18,21 +18,13 @@ interface TicketDetailProps {
   userLoggedIn: UserInterface
 }
 
-export default function TicketDetail({ ticket: selectedTicket, onBack, userLoggedIn }: TicketDetailProps) {
-  const [status, setStatus] = useState("")
-  const [priority, setPriority] = useState("")
+export default function TicketDetail({ ticket, onBack, userLoggedIn }: TicketDetailProps) {
+  const [selectedTicket, setSelectedTicket] = useState<TicketInterface>(ticket)
   const [chats, setChats] = useState<ChatInterface[] | null>(null)
   const [requester, setRequester] = useState<UserInterface | null>(null)
   const [assignedTo, setAssignedTo] = useState<UserInterface | null>(null)
 
-  useEffect(() => {
-    if (selectedTicket) {
-      setStatus(selectedTicket.status)
-      setPriority(selectedTicket.priority)
-    }
-  }, [selectedTicket])
 
-  // Use useEffect to set initial state values
   useEffect(() => {
 
     const loadData = async () => {
@@ -76,44 +68,6 @@ export default function TicketDetail({ ticket: selectedTicket, onBack, userLogge
     )
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "open":
-        return "bg-blue-500 hover:bg-blue-600"
-      case "in-progress":
-        return "bg-yellow-500 hover:bg-yellow-600"
-      case "pending":
-        return "bg-purple-500 hover:bg-purple-600"
-      case "closed":
-        return "bg-green-500 hover:bg-green-600"
-      default:
-        return "bg-gray-500 hover:bg-gray-600"
-    }
-  }
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "bg-red-500 hover:bg-red-600"
-      case "medium":
-        return "bg-orange-500 hover:bg-orange-600"
-      case "low":
-        return "bg-green-500 hover:bg-green-600"
-      default:
-        return "bg-gray-500 hover:bg-gray-600"
-    }
-  }
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(date)
-  }
 
   const handleSubmitComment = async (message: string, isInternal: boolean) => {
     if (!message.trim()) return
@@ -144,16 +98,31 @@ export default function TicketDetail({ ticket: selectedTicket, onBack, userLogge
 
   }
 
-  const handleStatusChange = (newStatus: string) => {
-    setStatus(newStatus)
-    alert(`Status updated to: ${newStatus}`)
-    // TODO: Update the ticket status via API
+  const handleStatusChange = async (newStatus: string) => {
+    setSelectedTicket({ ...selectedTicket, status: newStatus })
+    try {
+      await updateTicketStatus(selectedTicket.ticket_uuid, newStatus)
+    } catch (error) {
+      console.error("Error updating ticket status:", error)
+    }
   }
 
-  const handlePriorityChange = (newPriority: string) => {
-    setPriority(newPriority)
-    alert(`Priority updated to: ${newPriority}`)
-    // TODO: Update the ticket priority via API
+  const handlePriorityChange = async (newPriority: string) => {
+    setSelectedTicket({ ...selectedTicket, priority: newPriority })
+    try {
+      await updateTicketPriority(selectedTicket.ticket_uuid, newPriority)
+    } catch (error) {
+      console.error("Error updating ticket priority:", error)
+    }
+  }
+
+  const handleDeleteTicket = async () => {
+    try {
+      await deleteTicket(selectedTicket.ticket_uuid)
+      onBack()
+    } catch (error) {
+      console.error("Error deleting ticket:", error)
+    }
   }
 
   return (
@@ -166,11 +135,11 @@ export default function TicketDetail({ ticket: selectedTicket, onBack, userLogge
           <div>
             <div className="flex items-center gap-2">
               <span className="font-mono text-sm text-muted-foreground">{selectedTicket.ticket_tag}</span>
-              <Badge variant="outline" className={`text-white ${getStatusColor(status)}`}>
-                {status.replace("-", " ")}
+              <Badge variant="outline" className={`text-white ${getStatusColor(selectedTicket.status)}`}>
+                {selectedTicket.status.replace("-", " ")}
               </Badge>
-              <Badge variant="outline" className={`text-white ${getPriorityColor(priority)}`}>
-                {priority}
+              <Badge variant="outline" className={`text-white ${getPriorityColor(selectedTicket.priority)}`}>
+                {selectedTicket.priority}
               </Badge>
             </div>
             <CardTitle className="mt-1">{selectedTicket.title}</CardTitle>
@@ -186,7 +155,6 @@ export default function TicketDetail({ ticket: selectedTicket, onBack, userLogge
             </div>
             <ChatSection
               chats={chats}
-              ticketUuid={selectedTicket.ticket_uuid}
               onSubmitComment={handleSubmitComment}
               chatTitle="Comments & Activity"
             />
@@ -195,13 +163,12 @@ export default function TicketDetail({ ticket: selectedTicket, onBack, userLogge
             ticket={selectedTicket}
             requester={requester}
             assignedTo={assignedTo}
-            status={status}
-            priority={priority}
             onStatusChange={handleStatusChange}
             onPriorityChange={handlePriorityChange}
             formatDate={formatDate}
             getStatusColor={getStatusColor}
             getPriorityColor={getPriorityColor}
+            onDeleteTicket={handleDeleteTicket}
           />
 
         </div>
