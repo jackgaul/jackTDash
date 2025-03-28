@@ -1,4 +1,5 @@
 import uuid
+import random
 
 
 def get_next_it_owner_id():
@@ -12,4 +13,8 @@ def generate_ticket_uuid():
 
 
 def generate_ticket_tag():
-    return "TICKET-" + str(uuid.uuid4())
+    return "TICKET-" + str(random.randint(1000, 9999))
+
+
+def generate_message_uuid():
+    return str(uuid.uuid4())

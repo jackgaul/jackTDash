@@ -4,8 +4,14 @@ from psycopg2 import Error
 import psycopg2.extras
 import os
 from dotenv import load_dotenv
-from utils import get_next_it_owner_id, generate_ticket_uuid, generate_ticket_tag
+from utils import (
+    get_next_it_owner_id,
+    generate_ticket_uuid,
+    generate_ticket_tag,
+    generate_message_uuid,
+)
 from flask_cors import CORS
+from datetime import datetime
 
 # Load environment variables
 load_dotenv()
@@ -53,7 +59,7 @@ def create_ticket():
             "updated_at",
             "description",
             "raw_text",
-            "requesting_user_id",
+            "requesting_user_uuid",
         ]
 
         # Validate required fields
@@ -64,13 +70,21 @@ def create_ticket():
         cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
         insert_query = """
-        INSERT INTO tickets (ticket_uuid, ticket_tag, title, status, priority, category, created_at, updated_at, description, raw_text, requesting_user_id, it_owner_id)
-        VALUES (%(ticket_uuid)s, %(ticket_tag)s, %(title)s, %(status)s, %(priority)s, %(category)s, %(created_at)s, %(updated_at)s, %(description)s, %(raw_text)s, %(requesting_user_id)s, %(it_owner_id)s)
+        INSERT INTO tickets (
+            ticket_uuid, ticket_tag, title, status, priority, category,
+            created_at, updated_at, description, raw_text,
+            requesting_user_uuid, it_owner_uuid
+            )
+        VALUES (
+            %(ticket_uuid)s, %(ticket_tag)s, %(title)s, %(status)s, %(priority)s, %(category)s,
+            %(created_at)s, %(updated_at)s, %(description)s, %(raw_text)s, 
+            %(requesting_user_uuid)s, %(it_owner_uuid)s
+        )
         """
 
         # Set other Values
-        it_owner_id = get_next_it_owner_id()
-        data["it_owner_id"] = it_owner_id
+        # it_owner_uuid = get_next_it_owner_id()
+        # data["it_owner_uuid"] = it_owner_uuid
 
         ticket_uuid = generate_ticket_uuid()
         data["ticket_uuid"] = ticket_uuid
@@ -78,24 +92,101 @@ def create_ticket():
         ticket_tag = generate_ticket_tag()
         data["ticket_tag"] = ticket_tag
 
+        created_at = datetime.now().isoformat()
+        data["created_at"] = created_at
+        data["updated_at"] = created_at
+
         # Generate a unique ticket_id
         cursor.execute(insert_query, data)
         conn.commit()
 
         # Get the inserted ticket
         cursor.execute("SELECT * FROM tickets WHERE ticket_uuid = %s", (ticket_uuid,))
+        col_names = [desc[0] for desc in cursor.description]
         new_ticket = cursor.fetchone()
-
-        return (
-            jsonify({"message": "Ticket created successfully", "ticket": new_ticket}),
-            201,
-        )
+        new_ticket_dict = dict(zip(col_names, new_ticket))
+        return jsonify(new_ticket_dict), 201
 
     except Error as e:
         return jsonify({"error": str(e)}), 500
     finally:
-        if "conn" in locals() and conn.is_connected():
+        if cursor:
             cursor.close()
+        if conn:
+            conn.close()
+
+
+@app.route("/tickets/<ticket_uuid>", methods=["DELETE"])
+def delete_ticket(ticket_uuid):
+    print(f"Deleting ticket with UUID: {ticket_uuid}")
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cursor.execute("DELETE FROM tickets WHERE ticket_uuid = %s", (ticket_uuid,))
+        conn.commit()
+        return jsonify({"message": "Ticket deleted successfully"}), 200
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+
+@app.route("/tickets/<ticket_uuid>/status", methods=["PATCH"])
+def update_ticket_status(ticket_uuid):
+    print(f"Updating ticket status for UUID: {ticket_uuid}")
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        data = request.json
+        required_fields = ["status"]
+        if not all(field in data for field in required_fields):
+            return jsonify({"error": "Missing required fields"}), 400
+        cursor.execute(
+            "UPDATE tickets SET status = %s WHERE ticket_uuid = %s",
+            (data["status"], ticket_uuid),
+        )
+        conn.commit()
+        return jsonify({"message": "Ticket status updated successfully"}), 200
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+
+@app.route("/tickets/<ticket_uuid>/priority", methods=["PATCH"])
+def update_ticket_priority(ticket_uuid):
+    print(f"Updating ticket priority for UUID: {ticket_uuid}")
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        data = request.json
+        required_fields = ["priority"]
+        if not all(field in data for field in required_fields):
+            return jsonify({"error": "Missing required fields"}), 400
+        cursor.execute(
+            "UPDATE tickets SET priority = %s WHERE ticket_uuid = %s",
+            (data["priority"], ticket_uuid),
+        )
+        conn.commit()
+        return jsonify({"message": "Ticket priority updated successfully"}), 200
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
             conn.close()
 
 
@@ -124,16 +215,18 @@ def get_all_tickets():
             conn.close()
 
 
-@app.route("/tickets/it/<int:it_owner_id>", methods=["GET"])
-def get_tickets_by_owner(it_owner_id):
-    print(f"Getting tickets for IT owner ID: {it_owner_id}")
+@app.route("/tickets/it/<uuid:it_owner_uuid>", methods=["GET"])
+def get_tickets_by_owner(it_owner_uuid):
+    print(f"Getting tickets for IT owner UUID: {it_owner_uuid}")
     conn = None
     cursor = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-        cursor.execute("SELECT * FROM tickets WHERE it_owner_id = %s", (it_owner_id,))
+        cursor.execute(
+            "SELECT * FROM tickets WHERE it_owner_uuid = %s", (it_owner_uuid,)
+        )
         tickets = cursor.fetchall()
 
         # Convert the result to a list of dictionaries
@@ -166,6 +259,58 @@ def get_chats_by_ticket_uuid(ticket_uuid):
         chats_list = [dict(row) for row in chats]
 
         return jsonify(chats_list), 200
+
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+
+@app.route("/chats/<ticket_uuid>", methods=["POST"])
+def create_chat(ticket_uuid):
+    print(f"Creating chat for ticket UUID: {ticket_uuid}")
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        data = request.json
+        required_fields = [
+            "message",
+            "author_uuid",
+            "author_name",
+            "author_role",
+            "is_internal",
+        ]
+
+        created_at = datetime.now().isoformat()
+        message_uuid = generate_message_uuid()
+        data["message_uuid"] = message_uuid
+        data["created_at"] = created_at
+        data["ticket_uuid"] = ticket_uuid
+        if not all(field in data for field in required_fields):
+            return jsonify({"error": "Missing required fields"}), 400
+
+        cursor.execute(
+            "INSERT INTO chats (message_uuid, ticket_uuid, created_at, author_uuid, message, author_name, author_role, is_internal) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+            (
+                data["message_uuid"],
+                data["ticket_uuid"],
+                data["created_at"],
+                data["author_uuid"],
+                data["message"],
+                data["author_name"],
+                data["author_role"],
+                data["is_internal"],
+            ),
+        )
+        conn.commit()
+
+        return jsonify(data), 201
 
     except Error as e:
         return jsonify({"error": str(e)}), 500

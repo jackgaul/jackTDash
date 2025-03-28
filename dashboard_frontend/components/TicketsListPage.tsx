@@ -5,93 +5,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter, Clock, Tag } from "lucide-react"
-
+import { Search, Filter, Clock, Tag, Ticket } from "lucide-react"
+import { TicketInterface, UserInterface } from "@/typesNdefs/servalTypes"
+import { getStatusColor, getPriorityColor, formatDate } from "@/typesNdefs/utils"
 // Mock data for tickets
-const tickets = [
-  {
-    "category": "Database",
-    "created_at": "Tue, 11 Apr 2023 03:15:00 GMT",
-    "description": "Nightly database backup job failed to complete",
-    "id": 1,
-    "it_owner_id": 1,
-    "priority": "high",
-    "raw_text": "Automated backup process for production database cluster failed during overnight run. Error logs show potential disk space issues. Immediate investigation required to ensure data safety.",
-    "requesting_user_id": 201,
-    "status": "open",
-    "ticket_id": "TICKET-1001",
-    "title": "Database backup failure",
-    "updated_at": "Tue, 11 Apr 2023 07:30:00 GMT"
-  },
-  {
-    "category": "Slack",
-    "created_at": "Tue, 11 Apr 2023 08:00:00 GMT",
-    "description": "Critical Windows updates failing to deploy to marketing department machines",
-    "id": 2,
-    "it_owner_id": 1,
-    "priority": "high",
-    "raw_text": "SCCM reporting 23 workstations in Marketing department failed to receive latest security patches. Error code 0x80070002 appearing in logs. Potential security risk.",
-    "requesting_user_id": 202,
-    "status": "open",
-    "ticket_id": "TICKET-1002",
-    "title": "Windows update deployment issue",
-    "updated_at": "Tue, 11 Apr 2023 09:45:00 GMT"
-  },
-  {
-    "category": "Network",
-    "created_at": "Tue, 11 Apr 2023 07:15:00 GMT",
-    "description": "Core switch on 3rd floor showing intermittent failures",
-    "id": 3,
-    "it_owner_id": 1,
-    "priority": "high",
-    "raw_text": "Switch SW-3F-CORE-01 reporting multiple interface errors. Affecting approximately 50 users on floor 3. Redundant path active but operating at reduced capacity.",
-    "requesting_user_id": 203,
-    "status": "open",
-    "ticket_id": "TICKET-1003",
-    "title": "Network switch malfunction",
-    "updated_at": "Tue, 11 Apr 2023 08:00:00 GMT"
-  },
-  {
-    "category": "Email",
-    "created_at": "Mon, 10 Apr 2023 09:00:00 GMT",
-    "description": "Users are unable to send or receive emails since this morning.",
-    "id": 4,
-    "it_owner_id": 1,
-    "priority": "high",
-    "raw_text": "Multiple users reported inability to send or receive emails. System-wide email outage affecting all departments. Requires immediate attention.",
-    "requesting_user_id": 101,
-    "status": "open",
-    "ticket_id": "TICKET-1004",
-    "title": "Email service not working",
-    "updated_at": "Mon, 10 Apr 2023 14:30:00 GMT"
-  },
-]
 
-export interface Ticket {
-  ticket_uuid: string
-  ticket_tag: string
-  title: string
-  status: string
-  priority: string
-  category: string
-  created_at: string
-  updated_at: string
-  description: string
-  raw_text: string
-  requesting_user_uuid: string
-  it_owner_uuid: string
-  department: string
-}
+
 
 interface TicketsListProps {
-  onSelectTicket: (ticket: Ticket) => void
+  onSelectTicket: (ticket: TicketInterface) => void
+  userLoggedIn: UserInterface
 }
 
-export default function TicketsList({ onSelectTicket }: TicketsListProps) {
+export default function TicketsList({ onSelectTicket, userLoggedIn }: TicketsListProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [priorityFilter, setPriorityFilter] = useState("all")
-  const [tickets, setTickets] = useState<Ticket[]>([])
+  const [tickets, setTickets] = useState<TicketInterface[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -127,43 +57,7 @@ export default function TicketsList({ onSelectTicket }: TicketsListProps) {
 
 
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "open":
-        return "bg-blue-500 hover:bg-blue-600"
-      case "in-progress":
-        return "bg-yellow-500 hover:bg-yellow-600"
-      case "pending":
-        return "bg-purple-500 hover:bg-purple-600"
-      case "closed":
-        return "bg-green-500 hover:bg-green-600"
-      default:
-        return "bg-gray-500 hover:bg-gray-600"
-    }
-  }
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "bg-red-500 hover:bg-red-600"
-      case "medium":
-        return "bg-orange-500 hover:bg-orange-600"
-      case "low":
-        return "bg-green-500 hover:bg-green-600"
-      default:
-        return "bg-gray-500 hover:bg-gray-600"
-    }
-  }
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(date)
-  }
 
   if (isLoading) {
     return (

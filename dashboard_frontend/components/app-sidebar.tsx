@@ -19,8 +19,14 @@ import {
   SidebarSeparator,
   SidebarInput,
 } from "@/components/ui/sidebar"
+import { UserInterface } from "@/typesNdefs/servalTypes"
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  userLoggedIn: UserInterface
+  onPageClick: (page: "TicketList" | "TicketDetail" | "ServalChat") => void
+}
+
+export function AppSidebar({ userLoggedIn, onPageClick }: AppSidebarProps) {
   return (
     <Sidebar className="border-r">
       <SidebarHeader className="flex items-center px-4 py-2">
@@ -51,11 +57,11 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="My Requests" isActive>
+                <SidebarMenuButton tooltip="My Tickets" isActive={true} onClick={() => onPageClick("TicketList")}>
                   <ClipboardList className="h-5 w-5" />
-                  <span>My Requests</span>
+                  <span>My Tickets</span>
                 </SidebarMenuButton>
-                <SidebarMenuBadge>12</SidebarMenuBadge>
+
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Create Ticket">
@@ -64,7 +70,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Serval Chat">
+                <SidebarMenuButton tooltip="Serval Chat" onClick={() => onPageClick("ServalChat")}>
                   <MessageSquare className="h-5 w-5" />
                   <span>Serval Chat</span>
                 </SidebarMenuButton>
@@ -106,8 +112,8 @@ export function AppSidebar() {
             <AvatarFallback>JD</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
-            <span className="text-sm font-medium">John Doe</span>
-            <span className="text-xs text-muted-foreground">IT Support</span>
+            <span className="text-sm font-medium">{userLoggedIn.first_name} {userLoggedIn.last_name}</span>
+            <span className="text-xs text-muted-foreground">{userLoggedIn.role}</span>
           </div>
         </div>
       </SidebarFooter>
