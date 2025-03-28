@@ -16,6 +16,7 @@ export default function Dashboard() {
     email: "jack@example.com",
     role: "IT Manager",
   })
+  const [page, setPage] = useState<string>("TicketList")
 
   const handleSelectTicket = (ticket: TicketInterface) => {
     console.log("Selected ticket:", ticket)
@@ -24,6 +25,7 @@ export default function Dashboard() {
 
   const handleBackToList = () => {
     setSelectedTicket(null)
+    setPage("TicketList")
   }
 
 
