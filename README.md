@@ -31,13 +31,15 @@ This project consists of a Flask backend with PostgreSQL database and a Next.js 
 
 ##Views
 ### My Tickets
-![MyTickets](./photos/Screenshot%202025-03-28%20at%206.37.13 PM.png)
+![MyTickets](./photos/Screenshot%202025-03-29%20at%2011.55.37 AM.png)
 
-### Specific Ticket
-![One Ticket](./photos/Screenshot%202025-03-28%20at%206.39.19 PM.png)
+### Ticket Creation Via Chat
+![Chat](./photos/Screenshot%202025-03-29%20at%2011.54.53 AM.png)
 
-### Chat
-![Chat](./photos/Screenshot%202025-03-28%20at%206.40.45 PM.png)
+### Specific Ticket( Created From Chat)
+![One Ticket](./photos/Screenshot%202025-03-29%20at%2011.57.26 AM.png)
+
+
 
 ## Prerequisites
 

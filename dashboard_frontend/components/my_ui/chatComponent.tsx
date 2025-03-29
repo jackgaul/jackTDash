@@ -59,7 +59,7 @@ export function ChatSection({ chats, onSubmitComment, chatTitle }: ChatSectionPr
                                     <AvatarImage src={chat.author_name === "JackT" ? "" : "/placeholder-user.jpg"} />
                                     <AvatarFallback>
                                         {chat.author_name === "JackT"
-                                            ? "SER"
+                                            ? "JTG"
                                             : chat.author_name
                                                 .split(" ")
                                                 .map((n) => n[0])
