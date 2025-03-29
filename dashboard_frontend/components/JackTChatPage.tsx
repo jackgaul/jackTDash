@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { UserInterface, ChatInterface, TicketInterface } from "@/typesNdefs/servalTypes"
+import { UserInterface, ChatInterface, TicketInterface } from "@/typesNdefs/JackTTypes"
 import { ChatSection } from "./my_ui/chatComponent"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
@@ -12,13 +12,13 @@ import { TicketDetailsPanel } from "./my_ui/ticketDetailsPanel"
 import { getStatusColor, getPriorityColor, formatDate } from "@/typesNdefs/utils"
 import { getLLMBaseAttributes } from "@/api/llmService"
 
-interface ServalChatProps {
+interface JackTChatProps {
     userLoggedIn: UserInterface
     onBack: () => void
 }
 
 
-export default function ServalChat({ userLoggedIn, onBack }: ServalChatProps) {
+export default function JackTChat({ userLoggedIn, onBack }: JackTChatProps) {
     const [chats, setChats] = useState<ChatInterface[]>([])
     const [selectedTicket, setSelectedTicket] = useState<TicketInterface>({
         ticket_uuid: "",
@@ -105,7 +105,7 @@ export default function ServalChat({ userLoggedIn, onBack }: ServalChatProps) {
     return (
         <Card className="h-full">
             <CardHeader>
-                <CardTitle className="mt-1">Serval Chat</CardTitle>
+                <CardTitle className="mt-1">JackT Chat</CardTitle>
 
             </CardHeader>
             <CardContent>

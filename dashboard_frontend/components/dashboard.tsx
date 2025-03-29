@@ -5,8 +5,8 @@ import { AppSidebar } from "./app-sidebar"
 import TicketsList from "./TicketsListPage"
 import TicketDetail from "./TicketDetailPage"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { TicketInterface, UserInterface } from "@/typesNdefs/servalTypes"
-import ServalChat from "./ServalChatPage"
+import { TicketInterface, UserInterface } from "@/typesNdefs/JackTTypes"
+import JackTChat from "./JackTChatPage"
 
 export default function Dashboard() {
   const [selectedTicket, setSelectedTicket] = useState<TicketInterface | null>(null)
@@ -17,7 +17,7 @@ export default function Dashboard() {
     email: "jack@example.com",
     role: "IT Manager",
   })
-  const [page, setPage] = useState<"TicketList" | "TicketDetail" | "ServalChat">("TicketList")
+  const [page, setPage] = useState<"TicketList" | "TicketDetail" | "JackTChat">("TicketList")
 
   const handleSelectTicket = (ticket: TicketInterface) => {
 
@@ -30,7 +30,7 @@ export default function Dashboard() {
     setPage("TicketList")
   }
 
-  const handlePageClick = (page: "TicketList" | "TicketDetail" | "ServalChat") => {
+  const handlePageClick = (page: "TicketList" | "TicketDetail" | "JackTChat") => {
     setPage(page)
   }
 
@@ -64,8 +64,8 @@ export default function Dashboard() {
                       userLoggedIn={userLoggedIn} />
                   )
                   )
-                case "ServalChat":
-                  return <ServalChat
+                case "JackTChat":
+                  return <JackTChat
                     userLoggedIn={userLoggedIn}
                     onBack={handleBackToList}
                   />

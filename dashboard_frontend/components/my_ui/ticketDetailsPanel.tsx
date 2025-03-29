@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { TicketInterface, UserInterface } from "@/typesNdefs/servalTypes"
+import { TicketInterface, UserInterface } from "@/typesNdefs/JackTTypes"
 import { AlertTriangle, Clock, MessageSquare, Paperclip, Tag, User } from "lucide-react"
 
 interface TicketDetailsPanelProps {

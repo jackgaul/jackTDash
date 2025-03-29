@@ -24,7 +24,7 @@ __pycache__/
 
 # env files
 .env*
-backend/.serval_backend
+backend/.JackT_backend
 .venv/
 
 

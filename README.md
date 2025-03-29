@@ -1,4 +1,4 @@
-# Serval Agent Project
+# JackT Agent Project
 
 This project consists of a Flask backend with PostgreSQL database and a Next.js frontend dashboard. The application is built using modern web technologies and follows best practices for both frontend and backend development.
 
@@ -53,7 +53,7 @@ This project consists of a Flask backend with PostgreSQL database and a Next.js 
 
 ```bash
 git clone <repository-url>
-cd serval_agent
+cd JackT_agent
 ```
 
 ### 2. Backend Setup
@@ -76,7 +76,7 @@ pip install -r backend/requirements.txt
    POSTGRES_HOST=127.0.0.1
    POSTGRES_USER=your_username
    POSTGRES_PASSWORD=your_password
-   POSTGRES_DB=serval_db
+   POSTGRES_DB=JackT_db
    OPENAI_API_KEY=your_openai_api_key
    ```
    - Run the database setup script to populate sample tickets:
@@ -121,10 +121,10 @@ The frontend will run on `http://localhost:3000` by default.
 ## Project Structure
 
 ```
-serval_agent/
+JackT_agent/
 ├── backend/
 │   ├── db_setup/          # Database setup scripts
-│   ├── servalAgent/       # Main application code
+│   ├── JackTAgent/       # Main application code
 │   ├── app.py            # Flask application entry point
 │   ├── utils.py          # Utility functions
 │   └── .env              # Backend environment variables

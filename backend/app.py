@@ -12,7 +12,7 @@ from utils import (
 )
 from flask_cors import CORS
 from datetime import datetime
-from servalAgent.agent import llm_base_attributes
+from JackTAgent.agent import llm_base_attributes
 
 # Load environment variables
 load_dotenv()

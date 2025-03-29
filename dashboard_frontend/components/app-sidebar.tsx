@@ -19,11 +19,11 @@ import {
   SidebarSeparator,
   SidebarInput,
 } from "@/components/ui/sidebar"
-import { UserInterface } from "@/typesNdefs/servalTypes"
+import { UserInterface } from "@/typesNdefs/JackTTypes"
 
 interface AppSidebarProps {
   userLoggedIn: UserInterface
-  onPageClick: (page: "TicketList" | "TicketDetail" | "ServalChat") => void
+  onPageClick: (page: "TicketList" | "TicketDetail" | "JackTChat") => void
 }
 
 export function AppSidebar({ userLoggedIn, onPageClick }: AppSidebarProps) {
@@ -65,9 +65,9 @@ export function AppSidebar({ userLoggedIn, onPageClick }: AppSidebarProps) {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Serval Chat" onClick={() => onPageClick("ServalChat")}>
+                <SidebarMenuButton tooltip="JackT Chat" onClick={() => onPageClick("JackTChat")}>
                   <MessageSquare className="h-5 w-5" />
-                  <span>Serval Chat</span>
+                  <span>JackT Chat</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

@@ -90,7 +90,7 @@ def main():
     cur.execute(create_table_sql)
 
     my_user_id = "b87ab50f-e199-42a1-a257-cc4216e896c0"
-    serval_user_id = str(uuid.uuid4())
+    JackT_user_id = str(uuid.uuid4())
     john_user_id = str(uuid.uuid4())
     user_ids = [str(uuid.uuid4()) for _ in range(3)]
     first_ticket_uuid = "e0ff03cb-8e8b-42fb-9f92-e7fe98f80722"
@@ -257,7 +257,7 @@ def main():
             "ticket_uuid": tickets[0]["ticket_uuid"],
             "created_at": "2023-04-11 03:15:10",
             "author_uuid": my_user_id,
-            "message": "Hey Serval, Create a new Slack channel for the marketing department named #marketing-alerts and invite all members of the marketing department to the channel.",
+            "message": "Hey JackT, Create a new Slack channel for the marketing department named #marketing-alerts and invite all members of the marketing department to the channel.",
             "author_name": "Jack",
             "author_role": "IT Manager",
             "is_internal": True,
@@ -266,9 +266,9 @@ def main():
             "message_uuid": str(uuid.uuid4()),
             "ticket_uuid": tickets[0]["ticket_uuid"],
             "created_at": "2023-04-11 03:15:15",
-            "author_uuid": serval_user_id,
+            "author_uuid": JackT_user_id,
             "message": "Sure, I can do that. I'll create the channel and invite the members.",
-            "author_name": "Serval",
+            "author_name": "JackT",
             "author_role": "CoPilot",
             "is_internal": True,
         },
@@ -276,9 +276,9 @@ def main():
             "message_uuid": str(uuid.uuid4()),
             "ticket_uuid": tickets[0]["ticket_uuid"],
             "created_at": "2023-04-11 03:15:20",
-            "author_uuid": serval_user_id,
+            "author_uuid": JackT_user_id,
             "message": "I've created the channel and invited the members. Ill let John know.",
-            "author_name": "Serval",
+            "author_name": "JackT",
             "author_role": "CoPilot",
             "is_internal": True,
         },
@@ -286,9 +286,9 @@ def main():
             "message_uuid": str(uuid.uuid4()),
             "ticket_uuid": tickets[0]["ticket_uuid"],
             "created_at": "2023-04-11 03:15:25",
-            "author_uuid": serval_user_id,
+            "author_uuid": JackT_user_id,
             "message": "Hey John, I've created the channel and invited the members.",
-            "author_name": "Serval",
+            "author_name": "JackT",
             "author_role": "CoPilot",
             "is_internal": False,
         },
@@ -297,7 +297,7 @@ def main():
             "ticket_uuid": tickets[0]["ticket_uuid"],
             "created_at": "2023-04-11 03:15:30",
             "author_uuid": john_user_id,
-            "message": "Hey Serval, thanks for the help.",
+            "message": "Hey JackT, thanks for the help.",
             "author_name": "John Doe",
             "author_role": "Marketing Manager",
             "is_internal": False,

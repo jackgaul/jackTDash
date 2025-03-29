@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Filter, Clock, Tag, Ticket } from "lucide-react"
-import { TicketInterface, UserInterface } from "@/typesNdefs/servalTypes"
+import { TicketInterface, UserInterface } from "@/typesNdefs/JackTTypes"
 import { getStatusColor, getPriorityColor, formatDate } from "@/typesNdefs/utils"
 import { fetchTickets } from "@/api/ticketService"
 

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { MessageSquare, Paperclip } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ChatInterface } from "@/typesNdefs/servalTypes"
+import { ChatInterface } from "@/typesNdefs/JackTTypes"
 
 
 interface ChatSectionProps {
@@ -56,9 +56,9 @@ export function ChatSection({ chats, onSubmitComment, chatTitle }: ChatSectionPr
                         >
                             <div className="flex items-start gap-3">
                                 <Avatar className="h-8 w-8">
-                                    <AvatarImage src={chat.author_name === "Serval" ? "" : "/placeholder-user.jpg"} />
+                                    <AvatarImage src={chat.author_name === "JackT" ? "" : "/placeholder-user.jpg"} />
                                     <AvatarFallback>
-                                        {chat.author_name === "Serval"
+                                        {chat.author_name === "JackT"
                                             ? "SER"
                                             : chat.author_name
                                                 .split(" ")

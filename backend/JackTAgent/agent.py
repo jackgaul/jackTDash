@@ -6,7 +6,7 @@ from typing import List
 from pathlib import Path
 from openai import OpenAI
 from .systemPrompts import (
-    get_Serval_Agent_system_prompt,
+    get_JackT_Agent_system_prompt,
     get_Slack_Agent_system_prompt,
     get_Zoom_Agent_system_prompt,
     get_Notion_Agent_system_prompt,
@@ -57,7 +57,7 @@ def handle_tool_call(tool_call):
 def top_level_agent(user_prompt):
     conversation = Conversation(
         messages=[
-            get_Serval_Agent_system_prompt(),
+            get_JackT_Agent_system_prompt(),
             {"role": "user", "content": user_prompt},
         ],
         tools=[],
