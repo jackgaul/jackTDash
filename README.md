@@ -28,6 +28,17 @@ This project consists of a Flask backend with PostgreSQL database and a Next.js 
   - React Hook Form for form handling
   - Various Radix UI components for accessible UI elements
 
+
+##Views
+### My Tickets
+![MyTickets](./photos/Screenshot%202025-03-28%20at%206.37.13 PM.png)
+
+### Specific Ticket
+![One Ticket](./photos/Screenshot%202025-03-28%20at%206.39.19 PM.png)
+
+### Chat
+![Chat](./photos/Screenshot%202025-03-28%20at%206.40.45 PM.png)
+
 ## Prerequisites
 
 - Python 3.8+
