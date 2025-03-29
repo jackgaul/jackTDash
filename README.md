@@ -132,3 +132,27 @@ JackT_agent/
 ├── .venv/                # Python virtual environment
 └── requirements.txt      # Python dependencies
 ``` 
+
+
+## Future Work
+
+### Security Enhancements
+- Implement robust authentication and authorization system
+  - JWT-based user authentication
+  - Role-based access control (RBAC)
+  - Session management
+  - Secure password hashing and storage
+- Add SQL injection protection
+  - Implement proper input validation
+  - Use parameterized queries throughout
+- Enable HTTPS/SSL
+- Add rate limiting for API endpoints
+- Implement API key management
+
+### Additional Features
+- User management system
+- Audit logging
+- Enhanced error handling and monitoring
+- Automated backup system for the database
+- Input sanitization and validation across all endpoints
+- Comprehensive test suite (unit tests, integration tests)
