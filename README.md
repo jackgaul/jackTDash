@@ -7,9 +7,6 @@ This project consists of a Flask backend with PostgreSQL database and a Next.js 
 ### Backend
 - **Framework**: Flask (Python)
 - **Database**: PostgreSQL
-- **ORM**: SQLAlchemy
-- **Authentication**: JWT-based authentication
-- **API Documentation**: OpenAPI/Swagger
 - **Additional Libraries**:
   - Flask-CORS for handling cross-origin requests
   - python-dotenv for environment variable management
@@ -20,13 +17,9 @@ This project consists of a Flask backend with PostgreSQL database and a Next.js 
 - **Framework**: Next.js 15
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **UI Components**: Radix UI
 - **State Management**: React Hooks
 - **Package Manager**: pnpm
-- **Additional Libraries**:
-  - Next-themes for dark/light mode
-  - React Hook Form for form handling
-  - Various Radix UI components for accessible UI elements
+
 
 
 ##Views
