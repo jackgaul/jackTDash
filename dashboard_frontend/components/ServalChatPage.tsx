@@ -10,7 +10,7 @@ import { ArrowLeft } from "lucide-react"
 import { fetchChats, submitChatMessage, createTicket, updateTicketStatus, updateTicketPriority } from "@/api/ticketService"
 import { TicketDetailsPanel } from "./my_ui/ticketDetailsPanel"
 import { getStatusColor, getPriorityColor, formatDate } from "@/typesNdefs/utils"
-
+import { getLLMBaseAttributes } from "@/api/llmService"
 
 interface ServalChatProps {
     userLoggedIn: UserInterface
@@ -40,7 +40,25 @@ export default function ServalChat({ userLoggedIn, onBack }: ServalChatProps) {
         if (!message.trim()) return
         let ticket_to_use: TicketInterface;
         if (selectedTicket.ticket_uuid === "") {
-            const newTicket = await createTicket(selectedTicket)
+            const llm_ticket_attributes = await getLLMBaseAttributes(message)
+            const llm_ticket_attributes_json = JSON.parse(llm_ticket_attributes)
+            let llmTicket: TicketInterface = {
+                ticket_uuid: "",
+                ticket_tag: "",
+                title: llm_ticket_attributes_json.title,
+                description: llm_ticket_attributes_json.description,
+                status: llm_ticket_attributes_json.status,
+                priority: llm_ticket_attributes_json.priority,
+                category: llm_ticket_attributes_json.category,
+                department: llm_ticket_attributes_json.department,
+                requesting_user_uuid: userLoggedIn.user_uuid,
+                it_owner_uuid: userLoggedIn.user_uuid,
+                created_at: "",
+                updated_at: "",
+                raw_text: "",
+            }
+            console.log(llmTicket)
+            const newTicket = await createTicket(llmTicket)
             setSelectedTicket(newTicket)
             ticket_to_use = newTicket
         } else {

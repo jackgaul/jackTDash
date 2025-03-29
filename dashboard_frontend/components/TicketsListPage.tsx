@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Filter, Clock, Tag, Ticket } from "lucide-react"
 import { TicketInterface, UserInterface } from "@/typesNdefs/servalTypes"
 import { getStatusColor, getPriorityColor, formatDate } from "@/typesNdefs/utils"
-// Mock data for tickets
+import { fetchTickets } from "@/api/ticketService"
+
 
 
 
@@ -25,24 +26,20 @@ export default function TicketsList({ onSelectTicket, userLoggedIn }: TicketsLis
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+
   useEffect(() => {
-    const fetchTickets = async () => {
+
+    const loadTickets = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/tickets')
-        if (!response.ok) {
-          throw new Error('Failed to fetch tickets')
-        }
-        const data = await response.json()
-        console.log(data)
-        setTickets(data)
+        const tickets = await fetchTickets()
+        setTickets(tickets)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred')
       } finally {
         setIsLoading(false)
       }
     }
-
-    fetchTickets()
+    loadTickets()
   }, [])
 
   const filteredTickets = tickets.filter((ticket) => {
