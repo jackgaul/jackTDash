@@ -1,69 +1,82 @@
 # Ticket Management System API
 
-A simple Flask API for managing IT tickets with MySQL database integration.
+A Flask API for managing IT tickets with PostgreSQL database integration.
 
 ## Prerequisites
 
 - Python 3.x
-- MySQL Server
+- PostgreSQL
 - pip (Python package manager)
 
-## Setup Instructions
+## Setup
 
-1. **Create a MySQL Database**
-   ```sql
-   CREATE DATABASE tickets_db;
+1. **Configure Environment Variables**
+   Create a `.env` file with:
+   ```
+   POSTGRES_HOST=localhost
+   POSTGRES_USER=your_username
+   POSTGRES_PASSWORD=your_password
+   POSTGRES_DB=your_database
    ```
 
-2. **Configure Environment Variables**
-   - Copy the `.env` file and update the values according to your MySQL configuration:
-     ```
-     DB_HOST=localhost
-     DB_USER=your_username
-     DB_PASSWORD=your_password
-     DB_NAME=tickets_db
-     ```
-
-3. **Install Dependencies**
+2. **Install Dependencies**
    ```bash
    pip install -r requirements.txt
+   ```
+
+3. **Setup Database**
+   ```bash
+   python db_setup/postgres_load.py
    ```
 
 4. **Run the Application**
    ```bash
    python app.py
    ```
-   The server will start on `http://localhost:5000`
-
-## API Endpoints
-
-### Create a New Ticket
-- **POST** `/tickets`
-- Request body example:
-  ```json
-  {
-    "name": "Server Issue",
-    "description": "Production server is down",
-    "raw_text": "Detailed description of the issue...",
-    "severity": 1,
-    "requesting_user_id": 123,
-    "it_owner_id": 456
-  }
-  ```
-
-### Get All Tickets
-- **GET** `/tickets`
-
-### Get Tickets by IT Owner
-- **GET** `/tickets/it/<it_owner_id>`
+   Server starts on `http://localhost:5000`
 
 ## Database Schema
 
-The `tickets` table contains the following fields:
-- `id` (INT, PRIMARY KEY, AUTO_INCREMENT)
-- `name` (VARCHAR(255))
-- `description` (VARCHAR(255))
-- `raw_text` (TEXT)
-- `severity` (INT)
-- `requesting_user_id` (INT)
-- `it_owner_id` (INT) 
+### Users Table
+```sql
+CREATE TABLE users (
+    user_uuid UUID PRIMARY KEY,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    role VARCHAR(255) NOT NULL
+);
+```
+
+### Tickets Table
+```sql
+CREATE TABLE tickets (
+    ticket_uuid UUID PRIMARY KEY,
+    ticket_tag VARCHAR(255) NOT NULL UNIQUE,
+    title VARCHAR(255) NOT NULL,
+    status VARCHAR(255) NOT NULL,
+    priority VARCHAR(255) NOT NULL,
+    category VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL,
+    description VARCHAR(255),
+    raw_text TEXT,
+    department VARCHAR(255),
+    requesting_user_uuid UUID,
+    it_owner_uuid UUID
+);
+```
+
+### Chats Table
+```sql
+CREATE TABLE chats (
+    message_uuid UUID PRIMARY KEY,
+    ticket_uuid UUID NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    author_uuid UUID,
+    message TEXT,
+    author_name VARCHAR(255),
+    author_role VARCHAR(255),
+    is_internal BOOLEAN DEFAULT FALSE
+);
+```

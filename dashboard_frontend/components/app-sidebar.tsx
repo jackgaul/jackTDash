@@ -50,12 +50,7 @@ export function AppSidebar({ userLoggedIn, onPageClick }: AppSidebarProps) {
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Dashboard">
-                  <Home className="h-5 w-5" />
-                  <span>Dashboard</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="My Tickets" isActive={true} onClick={() => onPageClick("TicketList")}>
                   <ClipboardList className="h-5 w-5" />
