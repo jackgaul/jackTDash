@@ -77,7 +77,7 @@ pip install -r backend/requirements.txt
    - Run the database setup script to populate sample tickets:
 ```bash
 cd backend/db_setup
-python setup_postgres.py
+python reset_db.py
 ```
 
 4. Start the Flask backend:

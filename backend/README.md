@@ -26,7 +26,7 @@ A Flask API for managing IT tickets with PostgreSQL database integration.
 
 3. **Setup Database**
    ```bash
-   python db_setup/postgres_load.py
+   python db_setup/reset_db.py
    ```
 
 4. **Run the Application**
