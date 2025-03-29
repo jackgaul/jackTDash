@@ -57,7 +57,7 @@ export default function ServalChat({ userLoggedIn, onBack }: ServalChatProps) {
                 updated_at: "",
                 raw_text: "",
             }
-            console.log(llmTicket)
+
             const newTicket = await createTicket(llmTicket)
             setSelectedTicket(newTicket)
             ticket_to_use = newTicket

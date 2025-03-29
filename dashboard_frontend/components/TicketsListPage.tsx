@@ -137,10 +137,10 @@ export default function TicketsList({ onSelectTicket, userLoggedIn }: TicketsLis
                 <div className="flex justify-between items-start">
                   <span className="font-mono text-xs text-muted-foreground">#{ticket.ticket_tag}</span>
                   <div className="flex gap-2">
-                    <Badge variant="outline" className={`text-white ${getStatusColor(ticket.status)}`}>
+                    <Badge variant="outline" className={`text-white ${getStatusColor(ticket.status)} `}>
                       {ticket.status.replace("-", " ")}
                     </Badge>
-                    <Badge variant="outline" className={`text-white ${getPriorityColor(ticket.priority)}`}>
+                    <Badge variant="outline" className={`text-white ${getPriorityColor(ticket.priority)} `}>
                       {ticket.priority}
                     </Badge>
                   </div>

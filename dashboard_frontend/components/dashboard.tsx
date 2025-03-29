@@ -20,7 +20,7 @@ export default function Dashboard() {
   const [page, setPage] = useState<"TicketList" | "TicketDetail" | "ServalChat">("TicketList")
 
   const handleSelectTicket = (ticket: TicketInterface) => {
-    console.log("Selected ticket:", ticket)
+
     setSelectedTicket(ticket)
     setPage("TicketDetail")
   }
