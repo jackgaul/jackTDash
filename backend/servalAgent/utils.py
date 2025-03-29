@@ -5,6 +5,5 @@ from typing import List
 
 @dataclass
 class Conversation:
-    system_prompt: dict
     messages: List[dict]
     tools: List[dict]

@@ -293,3 +293,50 @@ def get_notion_tools() -> List[Dict[str, Any]]:
             },
         },
     ]
+
+
+def create_ticket_tool() -> List[Dict[str, Any]]:
+    """Return a list of ticket-related tool functions."""
+    return [
+        {
+            "type": "function",
+            "function": {
+                "name": "create_ticket",
+                "description": "Create a new ticket with the given attributes",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "title": {
+                            "type": "string",
+                            "description": "Title of the ticket",
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "Description of the ticket",
+                        },
+                        "status": {
+                            "type": "string",
+                            "description": "Status of the ticket: open, in-progress, pending, closed",
+                        },
+                        "priority": {
+                            "type": "string",
+                            "description": "Priority of the ticket: high, medium, low",
+                        },
+                        "category": {
+                            "type": "string",
+                            "description": "Application the bug is related to eg. Slack, Zoom, Notion, etc.",
+                        },
+                    },
+                    "required": [
+                        "title",
+                        "description",
+                        "status",
+                        "priority",
+                        "category",
+                    ],
+                    "additionalProperties": False,
+                },
+                "strict": True,
+            },
+        },
+    ]

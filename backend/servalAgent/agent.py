@@ -2,30 +2,38 @@ from dotenv import load_dotenv
 import os
 from dataclasses import dataclass
 from typing import List
-from utils import Conversation
+
 from pathlib import Path
 from openai import OpenAI
-from systemPrompts import (
+from .systemPrompts import (
     get_Serval_Agent_system_prompt,
     get_Slack_Agent_system_prompt,
     get_Zoom_Agent_system_prompt,
     get_Notion_Agent_system_prompt,
+    get_Ticket_Attributes_system_prompt,
 )
-from tools import (
+from .tools import (
     get_application_route_tool,
     get_slack_tools,
     get_zoom_tools,
     get_notion_tools,
+    create_ticket_tool,
 )
 
 load_dotenv(Path(__file__).parent.parent / ".env")
 client = OpenAI()
 
 
+@dataclass
+class Conversation:
+    messages: List[dict]
+    tools: List[dict]
+
+
 def openai_request(conversation, tool_function):
 
     conversation.tools = tool_function()
-    # system_prompt = conversation.system_prompt
+
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=conversation.messages,
@@ -53,7 +61,6 @@ def top_level_agent(user_prompt):
             {"role": "user", "content": user_prompt},
         ],
         tools=[],
-        system_prompt=get_Serval_Agent_system_prompt(),
     )
     response = openai_request(conversation, get_application_route_tool)
     if response.choices[0].message.tool_calls:
@@ -63,5 +70,22 @@ def top_level_agent(user_prompt):
         print(response.choices[0].message.content)
 
 
-query = "Create a new Slack channel called 'test' and invite 'test@test.com' to it"
-top_level_agent(query)
+def llm_base_attributes(user_prompt):
+    conversation = Conversation(
+        messages=[
+            get_Ticket_Attributes_system_prompt(),
+            {"role": "user", "content": user_prompt},
+        ],
+        tools=[],
+    )
+    response = openai_request(conversation, create_ticket_tool)
+    if response.choices[0].message.tool_calls:
+        print(response.choices[0].message.tool_calls[0].function.arguments)
+        return response.choices[0].message.tool_calls[0].function.arguments
+    else:
+        print(response.choices[0].message.content)
+
+
+if __name__ == "__main__":
+    query = "Create a new Slack channel called 'test' and invite 'test@test.com' to it"
+    llm_base_attributes(query)

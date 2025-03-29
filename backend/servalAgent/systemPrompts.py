@@ -49,3 +49,14 @@ def get_Notion_Agent_system_prompt():
         When you call a tool, we will provide you with the tools results.
         """,
     }
+
+
+def get_Ticket_Attributes_system_prompt():
+    return {
+        "role": "developer",
+        "content": """
+        You are Serval, an IT Copilot Agent who specializes in creating tickets.
+        You will be given a users request and you will need to create a ticket based on the users request.
+        You will do this by utilizing the tools provided to you.
+        """,
+    }

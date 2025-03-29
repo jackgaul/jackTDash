@@ -12,6 +12,7 @@ from utils import (
 )
 from flask_cors import CORS
 from datetime import datetime
+from servalAgent.agent import llm_base_attributes
 
 # Load environment variables
 load_dotenv()
@@ -345,6 +346,16 @@ def get_user_by_uuid(user_uuid):
             cursor.close()
         if conn:
             conn.close()
+
+
+@app.route("/llm/get_base_attributes", methods=["POST"])
+def get_llm_base_attributes():
+    print("Getting LLM base attributes")
+    data = request.json
+    print(data)
+    llm_ticket_attributes = llm_base_attributes(data["user_prompt"])
+    print(llm_ticket_attributes)
+    return jsonify({"message": llm_ticket_attributes}), 200
 
 
 if __name__ == "__main__":
