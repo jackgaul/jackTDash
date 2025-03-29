@@ -70,7 +70,7 @@ def top_level_agent(user_prompt):
         print(response.choices[0].message.content)
 
 
-def llm_base_attributes(user_prompt):
+def llm_ticket_base_attributes(user_prompt):
     conversation = Conversation(
         messages=[
             get_Ticket_Attributes_system_prompt(),
@@ -88,4 +88,4 @@ def llm_base_attributes(user_prompt):
 
 if __name__ == "__main__":
     query = "Create a new Slack channel called 'test' and invite 'test@test.com' to it"
-    llm_base_attributes(query)
+    llm_ticket_base_attributes(query)

@@ -40,8 +40,8 @@ export default function JackTChat({ userLoggedIn, onBack }: JackTChatProps) {
         if (!message.trim()) return
         let ticket_to_use: TicketInterface;
         if (selectedTicket.ticket_uuid === "") {
-            const llm_ticket_attributes = await getLLMBaseAttributes(message)
-            const llm_ticket_attributes_json = JSON.parse(llm_ticket_attributes)
+            const llm_ticket_attributes_json: TicketInterface = await getLLMBaseAttributes(message)
+
             let llmTicket: TicketInterface = {
                 ticket_uuid: "",
                 ticket_tag: "",

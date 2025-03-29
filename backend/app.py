@@ -12,7 +12,7 @@ from utils import (
 )
 from flask_cors import CORS
 from datetime import datetime
-from JackTAgent.agent import llm_base_attributes
+from JackTAgent.agent import llm_ticket_base_attributes
 
 # Load environment variables
 load_dotenv()
@@ -353,7 +353,7 @@ def get_llm_base_attributes():
     print("Getting LLM base attributes")
     data = request.json
     print(data)
-    llm_ticket_attributes = llm_base_attributes(data["user_prompt"])
+    llm_ticket_attributes = llm_ticket_base_attributes(data["user_prompt"])
     print(llm_ticket_attributes)
     return jsonify({"message": llm_ticket_attributes}), 200
 
