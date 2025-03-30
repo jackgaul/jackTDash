@@ -71,19 +71,18 @@ pip install -r backend/requirements.txt
    POSTGRES_HOST=127.0.0.1
    POSTGRES_USER=your_username
    POSTGRES_PASSWORD=your_password
-   POSTGRES_DB=JackT_db
+   POSTGRES_DB=jackt_db
    OPENAI_API_KEY=your_openai_api_key
    ```
    - Run the database setup script to populate sample tickets:
 ```bash
-cd backend/db_setup
-python reset_db.py
+python backend/models/reset_db.py
 ```
 
 4. Start the Flask backend:
 ```bash
 cd backend
-python app.py
+python main_app.py
 ```
 
 The backend will run on `http://localhost:5000` by default.
@@ -118,14 +117,19 @@ The frontend will run on `http://localhost:3000` by default.
 ```
 JackT_agent/
 ├── backend/
-│   ├── db_setup/          # Database setup scripts
-│   ├── JackTAgent/       # Main application code
-│   ├── app.py            # Flask application entry point
-│   ├── utils.py          # Utility functions
-│   └── .env              # Backend environment variables
-├── dashboard_frontend/    # Next.js frontend application
+│   ├── api/              # Flask routes for user, message, ticket, and llm
+│   ├── LLMAgent/         # Agent code including prompts and tools
+│   ├── models            # Models for DB and reset_db.py
+│   ├── repositories      # Repository classes for data models
+│   ├── services          # Service for the api that utilize respective repositories
+│   ├── utils             # Utility functions
+│   ├── .env              # Backend environment variables
+│   ├── requirements.txt  # Python Requirements for venv
+│   └── main_app.py       # Flask app
+├── dashboard_frontend/   # Next.js frontend application
 ├── .venv/                # Python virtual environment
-└── requirements.txt      # Python dependencies
+└── README.md             # This file
+
 ``` 
 
 
@@ -137,9 +141,6 @@ JackT_agent/
   - Role-based access control (RBAC)
   - Session management
   - Secure password hashing and storage
-- Add SQL injection protection
-  - Implement proper input validation
-  - Use parameterized queries throughout
 - Enable HTTPS/SSL
 - Add rate limiting for API endpoints
 - Implement API key management
