@@ -5,18 +5,12 @@ from typing import List
 
 from pathlib import Path
 from openai import OpenAI
-from .systemPrompts import (
+from .system_prompts import (
     get_JackT_Agent_system_prompt,
-    get_Slack_Agent_system_prompt,
-    get_Zoom_Agent_system_prompt,
-    get_Notion_Agent_system_prompt,
     get_Ticket_Attributes_system_prompt,
 )
 from .tools import (
     get_application_route_tool,
-    get_slack_tools,
-    get_zoom_tools,
-    get_notion_tools,
     create_ticket_tool,
 )
 
@@ -70,7 +64,7 @@ def top_level_agent(user_prompt):
         print(response.choices[0].message.content)
 
 
-def llm_base_attributes(user_prompt):
+def llm_ticket_base_attributes(user_prompt):
     conversation = Conversation(
         messages=[
             get_Ticket_Attributes_system_prompt(),
@@ -80,12 +74,16 @@ def llm_base_attributes(user_prompt):
     )
     response = openai_request(conversation, create_ticket_tool)
     if response.choices[0].message.tool_calls:
-        print(response.choices[0].message.tool_calls[0].function.arguments)
-        return response.choices[0].message.tool_calls[0].function.arguments
+        # print(response.choices[0].message.tool_calls[0].function.arguments)
+        return {
+            "response": response.choices[0].message.tool_calls[0].function.arguments,
+            "type": "create_ticket",
+        }
     else:
         print(response.choices[0].message.content)
+        return {"response": response.choices[0].message.content, "type": "message"}
 
 
 if __name__ == "__main__":
     query = "Create a new Slack channel called 'test' and invite 'test@test.com' to it"
-    llm_base_attributes(query)
+    llm_ticket_base_attributes(query)

@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { UserInterface, ChatInterface, TicketInterface } from "@/typesNdefs/JackTTypes"
+import { UserInterface, MessageInterface, TicketInterface } from "@/typesNdefs/JackTTypes"
 import { ChatSection } from "./my_ui/chatComponent"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
-import { fetchChats, submitChatMessage, createTicket, updateTicketStatus, updateTicketPriority } from "@/api/ticketService"
+import { fetchMessages, submitMessage, createTicket, updateTicketStatus, updateTicketPriority } from "@/api/ticketService"
 import { TicketDetailsPanel } from "./my_ui/ticketDetailsPanel"
 import { getStatusColor, getPriorityColor, formatDate } from "@/typesNdefs/utils"
 import { getLLMBaseAttributes } from "@/api/llmService"
@@ -19,7 +19,7 @@ interface JackTChatProps {
 
 
 export default function JackTChat({ userLoggedIn, onBack }: JackTChatProps) {
-    const [chats, setChats] = useState<ChatInterface[]>([])
+    const [messages, setMessages] = useState<MessageInterface[]>([])
     const [selectedTicket, setSelectedTicket] = useState<TicketInterface>({
         ticket_uuid: "",
         ticket_tag: "",
@@ -40,8 +40,8 @@ export default function JackTChat({ userLoggedIn, onBack }: JackTChatProps) {
         if (!message.trim()) return
         let ticket_to_use: TicketInterface;
         if (selectedTicket.ticket_uuid === "") {
-            const llm_ticket_attributes = await getLLMBaseAttributes(message)
-            const llm_ticket_attributes_json = JSON.parse(llm_ticket_attributes)
+            const llm_ticket_attributes_json: TicketInterface = await getLLMBaseAttributes(message)
+            console.log(llm_ticket_attributes_json)
             let llmTicket: TicketInterface = {
                 ticket_uuid: "",
                 ticket_tag: "",
@@ -66,13 +66,13 @@ export default function JackTChat({ userLoggedIn, onBack }: JackTChatProps) {
         }
 
         try {
-            const newChat = await submitChatMessage(
+            const newMessage = await submitMessage(
                 ticket_to_use.ticket_uuid,
                 message,
                 isInternal,
                 userLoggedIn
             )
-            setChats(prev => prev ? [...prev, newChat] : [newChat])
+            setMessages(prev => prev ? [...prev, newMessage] : [newMessage])
         } catch (error) {
             console.error("Error submitting comment:", error)
         }
@@ -113,7 +113,7 @@ export default function JackTChat({ userLoggedIn, onBack }: JackTChatProps) {
                     <div className="md:col-span-2 space-y-6">
                         <div className="h-full">
                             <ChatSection
-                                chats={chats}
+                                messages={messages}
                                 onSubmitComment={handleSubmitComment}
                                 chatTitle={""}
                             />

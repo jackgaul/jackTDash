@@ -6,16 +6,16 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { MessageSquare, Paperclip } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ChatInterface } from "@/typesNdefs/JackTTypes"
+import { MessageInterface } from "@/typesNdefs/JackTTypes"
 
 
 interface ChatSectionProps {
-    chats: ChatInterface[] | null
+    messages: MessageInterface[] | null
     onSubmitComment: (comment: string, isInternal: boolean) => void
     chatTitle: string
 }
 
-export function ChatSection({ chats, onSubmitComment, chatTitle }: ChatSectionProps) {
+export function ChatSection({ messages, onSubmitComment, chatTitle }: ChatSectionProps) {
     const [newComment, setNewComment] = useState("")
     const [isInternalNote, setIsInternalNote] = useState(false)
 
@@ -43,24 +43,24 @@ export function ChatSection({ chats, onSubmitComment, chatTitle }: ChatSectionPr
             <div className="flex items-center justify-between mb-2">
                 <h3 className="text-lg font-medium">{chatTitle}</h3>
                 <Badge variant="outline" className="font-normal">
-                    {chats?.length || 0} entries
+                    {messages?.length || 0} entries
                 </Badge>
             </div>
 
             <div className="space-y-4">
-                {chats && chats.length > 0 ? (
-                    chats.map((chat) => (
+                {messages && messages.length > 0 ? (
+                    messages.map((message) => (
                         <div
-                            key={chat.message_uuid}
-                            className={`p-4 rounded-lg border ${chat.is_internal ? "bg-muted/50" : ""}`}
+                            key={message.message_uuid}
+                            className={`p-4 rounded-lg border ${message.is_internal ? "bg-muted/50" : ""}`}
                         >
                             <div className="flex items-start gap-3">
                                 <Avatar className="h-8 w-8">
-                                    <AvatarImage src={chat.author_name === "JackT" ? "" : "/placeholder-user.jpg"} />
+                                    <AvatarImage src={message.author_name === "JackT" ? "" : "/placeholder-user.jpg"} />
                                     <AvatarFallback>
-                                        {chat.author_name === "JackT"
+                                        {message.author_name === "JackT"
                                             ? "JTG"
-                                            : chat.author_name
+                                            : message.author_name
                                                 .split(" ")
                                                 .map((n) => n[0])
                                                 .join("")}
@@ -69,13 +69,13 @@ export function ChatSection({ chats, onSubmitComment, chatTitle }: ChatSectionPr
                                 <div className="flex-1">
                                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1">
                                         <div>
-                                            <span className="font-medium">{chat.author_name}</span>
-                                            <span className="text-xs text-muted-foreground ml-2">{chat.author_role}</span>
+                                            <span className="font-medium">{message.author_name}</span>
+                                            <span className="text-xs text-muted-foreground ml-2">{message.author_role}</span>
                                         </div>
-                                        <span className="text-xs text-muted-foreground">{formatDate(chat.created_at)}</span>
+                                        <span className="text-xs text-muted-foreground">{formatDate(message.created_at)}</span>
                                     </div>
-                                    <p className="text-sm">{chat.message}</p>
-                                    {chat.is_internal && (
+                                    <p className="text-sm">{message.message}</p>
+                                    {message.is_internal && (
                                         <Badge variant="outline" className="mt-2 text-xs">
                                             Internal Note
                                         </Badge>

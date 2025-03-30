@@ -7,9 +7,9 @@ import { toast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import { ChatSection } from "./my_ui/chatComponent"
-import { TicketInterface, ChatInterface, UserInterface } from "@/typesNdefs/JackTTypes"
+import { TicketInterface, MessageInterface, UserInterface } from "@/typesNdefs/JackTTypes"
 import { TicketDetailsPanel } from "./my_ui/ticketDetailsPanel"
-import { fetchChats, fetchUser, submitChatMessage, deleteTicket, updateTicketStatus, updateTicketPriority } from "@/api/ticketService"
+import { fetchMessages, fetchUser, submitMessage, deleteTicket, updateTicketStatus, updateTicketPriority } from "@/api/ticketService"
 import { getStatusColor, getPriorityColor, formatDate } from "@/typesNdefs/utils"
 
 interface TicketDetailProps {
@@ -20,7 +20,7 @@ interface TicketDetailProps {
 
 export default function TicketDetail({ ticket, onBack, userLoggedIn }: TicketDetailProps) {
   const [selectedTicket, setSelectedTicket] = useState<TicketInterface>(ticket)
-  const [chats, setChats] = useState<ChatInterface[] | null>(null)
+  const [messages, setMessages] = useState<MessageInterface[] | null>(null)
   const [requester, setRequester] = useState<UserInterface | null>(null)
   const [assignedTo, setAssignedTo] = useState<UserInterface | null>(null)
 
@@ -30,8 +30,8 @@ export default function TicketDetail({ ticket, onBack, userLoggedIn }: TicketDet
     const loadData = async () => {
 
       try {
-        const chatsData = await fetchChats(selectedTicket.ticket_uuid)
-        setChats(chatsData)
+        const messagesData = await fetchMessages(selectedTicket.ticket_uuid)
+        setMessages(messagesData)
 
         const requesterData = await fetchUser(selectedTicket.requesting_user_uuid)
         setRequester(requesterData)
@@ -73,14 +73,14 @@ export default function TicketDetail({ ticket, onBack, userLoggedIn }: TicketDet
     if (!message.trim()) return
     // TODO: Send the comment to an API
     try {
-      const newChat = await submitChatMessage(
+      const newMessage = await submitMessage(
         selectedTicket.ticket_uuid,
         message,
         isInternal,
         userLoggedIn
       )
 
-      setChats(prev => prev ? [...prev, newChat] : [newChat])
+      setMessages(prev => prev ? [...prev, newMessage] : [newMessage])
 
       toast({
         title: "Comment submitted",
@@ -154,7 +154,7 @@ export default function TicketDetail({ ticket, onBack, userLoggedIn }: TicketDet
               <p className="text-muted-foreground">{selectedTicket.description}</p>
             </div>
             <ChatSection
-              chats={chats}
+              messages={messages}
               onSubmitComment={handleSubmitComment}
               chatTitle="Comments & Activity"
             />

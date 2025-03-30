@@ -1,11 +1,12 @@
 // api/ticketService.ts
-import { ChatInterface, TicketInterface, UserInterface } from "@/typesNdefs/JackTTypes"
+import { MessageInterface, TicketInterface, UserInterface } from "@/typesNdefs/JackTTypes"
 
-const API_BASE_URL = "http://127.0.0.1:5000"
+const API_BASE_URL = "http://127.0.0.1:5000/api"
 
 // Fetch all tickets
 export async function fetchTickets(): Promise<TicketInterface[]> {
-    const response = await fetch(`${API_BASE_URL}/tickets`)
+    const response = await fetch(`${API_BASE_URL}/tickets/`)
+    console.log("response", response)
     if (!response.ok) {
         throw new Error(`Error fetching tickets: ${response.statusText}`)
     }
@@ -21,11 +22,11 @@ export async function fetchTicket(ticketUuid: string): Promise<TicketInterface> 
     return response.json()
 }
 
-// Fetch chat messages for a ticket
-export async function fetchChats(ticketUuid: string): Promise<ChatInterface[]> {
-    const response = await fetch(`${API_BASE_URL}/chats/${ticketUuid}`)
+// Fetch messages for a ticket
+export async function fetchMessages(ticketUuid: string): Promise<MessageInterface[]> {
+    const response = await fetch(`${API_BASE_URL}/messages/${ticketUuid}`)
     if (!response.ok) {
-        throw new Error(`Error fetching chats: ${response.statusText}`)
+        throw new Error(`Error fetching messages: ${response.statusText}`)
     }
     return response.json()
 }
@@ -39,14 +40,14 @@ export async function fetchUser(userUuid: string): Promise<UserInterface> {
     return response.json()
 }
 
-// Add a new chat message
-export async function submitChatMessage(
+// Add a new message
+export async function submitMessage(
     ticketUuid: string,
     message: string,
     isInternal: boolean,
     userLoggedIn: UserInterface
-): Promise<ChatInterface> {
-    const response = await fetch(`${API_BASE_URL}/chats/${ticketUuid}`, {
+): Promise<MessageInterface> {
+    const response = await fetch(`${API_BASE_URL}/messages/${ticketUuid}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -62,11 +63,14 @@ export async function submitChatMessage(
     })
 
     if (!response.ok) {
-        throw new Error(`Error submitting chat message: ${response.statusText}`)
+        throw new Error(`Error submitting message: ${response.statusText}`)
     }
 
     return response.json()
 }
+
+
+
 
 // Update ticket status
 export async function updateTicketStatus(
@@ -123,7 +127,7 @@ export async function deleteTicket(ticketUuid: string): Promise<void> {
 
 // Create a new ticket
 export async function createTicket(ticket: TicketInterface): Promise<TicketInterface> {
-    const response = await fetch(`${API_BASE_URL}/tickets`, {
+    const response = await fetch(`${API_BASE_URL}/tickets/`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
