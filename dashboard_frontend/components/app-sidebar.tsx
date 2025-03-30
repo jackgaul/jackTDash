@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar"
 import { UserInterface } from "@/typesNdefs/JackTTypes"
 
-interface AppSidebarProps {
+interface AppSidebarProps { // Need to pass in the current page to set the active button
   userLoggedIn: UserInterface
   onPageClick: (page: "TicketList" | "TicketDetail" | "JackTChat") => void
 }
@@ -50,13 +50,17 @@ export function AppSidebar({ userLoggedIn, onPageClick }: AppSidebarProps) {
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip="All Tickets" isActive={false} onClick={() => onPageClick("TicketList")}>
+                  <ClipboardList className="h-5 w-5" />
+                  <span>All Tickets</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="My Tickets" isActive={true} onClick={() => onPageClick("TicketList")}>
                   <ClipboardList className="h-5 w-5" />
                   <span>My Tickets</span>
                 </SidebarMenuButton>
-
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Create Ticket">

@@ -14,7 +14,7 @@ export interface TicketInterface {
     department: string
 }
 
-export interface ChatInterface {
+export interface MessageInterface {
     message_uuid: string
     ticket_uuid: string
     created_at: string

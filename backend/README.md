@@ -67,9 +67,9 @@ CREATE TABLE tickets (
 );
 ```
 
-### Chats Table
+### Messages Table
 ```sql
-CREATE TABLE chats (
+CREATE TABLE messages (
     message_uuid UUID PRIMARY KEY,
     ticket_uuid UUID NOT NULL,
     created_at TIMESTAMP NOT NULL,

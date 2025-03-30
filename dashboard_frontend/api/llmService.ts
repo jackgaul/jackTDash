@@ -1,6 +1,6 @@
 import { TicketInterface } from "@/typesNdefs/JackTTypes"
 
-const API_BASE_URL = "http://127.0.0.1:5000"
+const API_BASE_URL = "http://127.0.0.1:5000/api"
 
 
 
@@ -33,7 +33,9 @@ export async function getLLMBaseAttributes(prompt: string): Promise<TicketInterf
         }
         return newTicket
     } else {
-        const parsedData = JSON.parse(data.message)
+        //const parsedData = JSON.parse(data.message)
+        const parsedData = data.message
+        console.log(parsedData)
         const parsedTicket: TicketInterface = {
             ticket_uuid: "",
             ticket_tag: "",

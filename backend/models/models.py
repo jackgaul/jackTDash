@@ -26,7 +26,7 @@ class User(Base):
         foreign_keys="Ticket.requesting_user_uuid",
         back_populates="requesting_user",
     )
-    messages = relationship("Chat", back_populates="author")
+    messages = relationship("Message", back_populates="author")
 
     def __repr__(self):
         return f"<User(user_uuid='{self.user_uuid}', first_name='{self.first_name}', last_name='{self.last_name}', email='{self.email}')>"
@@ -52,6 +52,7 @@ class Ticket(Base):
     # Foreign keys
     requesting_user_uuid = Column(UUID(as_uuid=True), ForeignKey("users.user_uuid"))
     it_owner_uuid = Column(UUID(as_uuid=True), ForeignKey("users.user_uuid"))
+    deleted = Column(Boolean, default=False)
 
     # Relationships
     requesting_user = relationship(
@@ -60,14 +61,14 @@ class Ticket(Base):
     it_owner = relationship(
         "User", foreign_keys=[it_owner_uuid], back_populates="assigned_tickets"
     )
-    messages = relationship("Chat", back_populates="ticket")
+    messages = relationship("Message", back_populates="ticket")
 
     def __repr__(self):
-        return f"<Ticket(ticket_uuid='{self.ticket_uuid}', ticket_tag='{self.ticket_tag}', title='{self.title}')>"
+        return f"<Ticket(ticket_uuid='{self.ticket_uuid}', ticket_tag='{self.ticket_tag}', title='{self.title}', status='{self.status}', priority='{self.priority}', category='{self.category}', created_at='{self.created_at}', updated_at='{self.updated_at}', description='{self.description}', raw_text='{self.raw_text}', department='{self.department}', requesting_user_uuid='{self.requesting_user_uuid}', it_owner_uuid='{self.it_owner_uuid}')>"
 
 
-class Chat(Base):
-    __tablename__ = "chats"
+class Message(Base):
+    __tablename__ = "messages"
 
     message_uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     ticket_uuid = Column(
@@ -85,4 +86,4 @@ class Chat(Base):
     author = relationship("User", back_populates="messages")
 
     def __repr__(self):
-        return f"<Chat(message_uuid='{self.message_uuid}', ticket_uuid='{self.ticket_uuid}')>"
+        return f"<Message(message_uuid='{self.message_uuid}', ticket_uuid='{self.ticket_uuid}', created_at='{self.created_at}', author_uuid='{self.author_uuid}', message='{self.message}', author_name='{self.author_name}', author_role='{self.author_role}', is_internal='{self.is_internal}')>"

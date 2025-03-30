@@ -7,7 +7,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
 # Import our models
-from models import Base, User, Ticket, Chat
+from models import Base, User, Ticket, Message
 
 # Load environment variables
 current_dir = os.path.dirname(__file__)
@@ -69,7 +69,7 @@ def main():
     session = Session()
 
     # Define UUIDs for reference
-    my_user_id = uuid.UUID("b87ab50f-e199-42a1-a257-cc4216e896c0")
+    it_owner_user_id = uuid.UUID("b87ab50f-e199-42a1-a257-cc4216e896c0")
     john_user_id = uuid.uuid4()
     JackT_user_id = uuid.uuid4()
     user_ids = [uuid.uuid4() for _ in range(3)]
@@ -85,7 +85,7 @@ def main():
             role="Marketing Manager",
         ),
         User(
-            user_uuid=my_user_id,
+            user_uuid=it_owner_user_id,
             first_name="Jack",
             last_name="Gaul",
             email="jack@example.com",
@@ -138,7 +138,7 @@ def main():
             raw_text="Create a new Slack channel for the marketing department named #marketing-alerts and invite all members of the marketing department to the channel.",
             requesting_user_uuid=john_user_id,
             department="Marketing",
-            it_owner_uuid=my_user_id,
+            it_owner_uuid=it_owner_user_id,
         ),
         Ticket(
             ticket_uuid=uuid.uuid4(),
@@ -154,7 +154,7 @@ def main():
             "security patches. Error code 0x80070002 appearing in logs. Potential security risk.",
             requesting_user_uuid=user_ids[0],
             department="Marketing",
-            it_owner_uuid=my_user_id,
+            it_owner_uuid=it_owner_user_id,
         ),
         Ticket(
             ticket_uuid=uuid.uuid4(),
@@ -170,7 +170,7 @@ def main():
             "50 users on floor 3. Redundant path active but operating at reduced capacity.",
             requesting_user_uuid=user_ids[1],
             department="IT",
-            it_owner_uuid=my_user_id,
+            it_owner_uuid=it_owner_user_id,
         ),
         Ticket(
             ticket_uuid=uuid.uuid4(),
@@ -186,7 +186,7 @@ def main():
             "outage affecting all departments. Requires immediate attention.",
             requesting_user_uuid=user_ids[2],
             department="Marketing",
-            it_owner_uuid=my_user_id,
+            it_owner_uuid=it_owner_user_id,
         ),
         Ticket(
             ticket_uuid=uuid.uuid4(),
@@ -202,7 +202,7 @@ def main():
             "multiple geographic locations. Connection stability varies throughout the day.",
             requesting_user_uuid=user_ids[0],
             department="IT",
-            it_owner_uuid=my_user_id,
+            it_owner_uuid=it_owner_user_id,
         ),
         Ticket(
             ticket_uuid=uuid.uuid4(),
@@ -218,15 +218,15 @@ def main():
             "Workstations identified: MKT-001 through MKT-005.",
             requesting_user_uuid=user_ids[1],
             department="Marketing",
-            it_owner_uuid=my_user_id,
+            it_owner_uuid=it_owner_user_id,
         ),
     ]
     session.add_all(tickets)
     session.flush()
 
-    # Create chats
-    chats = [
-        Chat(
+    # Create messages
+    messages = [
+        Message(
             message_uuid=uuid.uuid4(),
             ticket_uuid=first_ticket_uuid,
             created_at=datetime.fromisoformat("2023-04-11 03:15:00"),
@@ -236,17 +236,17 @@ def main():
             author_role="Marketing Manager",
             is_internal=False,
         ),
-        Chat(
+        Message(
             message_uuid=uuid.uuid4(),
             ticket_uuid=first_ticket_uuid,
             created_at=datetime.fromisoformat("2023-04-11 03:15:10"),
-            author_uuid=my_user_id,
+            author_uuid=it_owner_user_id,
             message="Hey JackT, Create a new Slack channel for the marketing department named #marketing-alerts and invite all members of the marketing department to the channel.",
             author_name="Jack",
             author_role="IT Manager",
             is_internal=True,
         ),
-        Chat(
+        Message(
             message_uuid=uuid.uuid4(),
             ticket_uuid=first_ticket_uuid,
             created_at=datetime.fromisoformat("2023-04-11 03:15:15"),
@@ -256,7 +256,7 @@ def main():
             author_role="CoPilot",
             is_internal=True,
         ),
-        Chat(
+        Message(
             message_uuid=uuid.uuid4(),
             ticket_uuid=first_ticket_uuid,
             created_at=datetime.fromisoformat("2023-04-11 03:15:20"),
@@ -266,7 +266,7 @@ def main():
             author_role="CoPilot",
             is_internal=True,
         ),
-        Chat(
+        Message(
             message_uuid=uuid.uuid4(),
             ticket_uuid=first_ticket_uuid,
             created_at=datetime.fromisoformat("2023-04-11 03:15:25"),
@@ -276,7 +276,7 @@ def main():
             author_role="CoPilot",
             is_internal=False,
         ),
-        Chat(
+        Message(
             message_uuid=uuid.uuid4(),
             ticket_uuid=first_ticket_uuid,
             created_at=datetime.fromisoformat("2023-04-11 03:15:30"),
@@ -287,7 +287,7 @@ def main():
             is_internal=False,
         ),
     ]
-    session.add_all(chats)
+    session.add_all(messages)
 
     # Commit all changes
     session.commit()

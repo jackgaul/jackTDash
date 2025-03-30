@@ -13,6 +13,7 @@ from utils import (
 from flask_cors import CORS
 from datetime import datetime
 from JackTAgent.agent import llm_ticket_base_attributes
+from models import Ticket, Message, User
 
 # Load environment variables
 load_dotenv()
@@ -125,10 +126,14 @@ def delete_ticket(ticket_uuid):
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        # Delete all messages associated with the ticket
+        cursor.execute("DELETE FROM messages WHERE ticket_uuid = %s", (ticket_uuid,))
+        # Delete the ticket
         cursor.execute("DELETE FROM tickets WHERE ticket_uuid = %s", (ticket_uuid,))
         conn.commit()
         return jsonify({"message": "Ticket deleted successfully"}), 200
     except Error as e:
+        print(f"Error deleting ticket: {e}")
         return jsonify({"error": str(e)}), 500
     finally:
         if cursor:
@@ -244,22 +249,22 @@ def get_tickets_by_owner(it_owner_uuid):
             conn.close()
 
 
-@app.route("/chats/<ticket_uuid>", methods=["GET"])
-def get_chats_by_ticket_uuid(ticket_uuid):
-    print(f"Getting chats for ticket UUID: {ticket_uuid}")
+@app.route("/messages/<ticket_uuid>", methods=["GET"])
+def get_messages_by_ticket_uuid(ticket_uuid):
+    print(f"Getting messages for ticket UUID: {ticket_uuid}")
     conn = None
     cursor = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-        cursor.execute("SELECT * FROM chats WHERE ticket_uuid = %s", (ticket_uuid,))
-        chats = cursor.fetchall()
+        cursor.execute("SELECT * FROM messages WHERE ticket_uuid = %s", (ticket_uuid,))
+        messages = cursor.fetchall()
 
         # Convert the result to a list of dictionaries
-        chats_list = [dict(row) for row in chats]
+        messages_list = [dict(row) for row in messages]
 
-        return jsonify(chats_list), 200
+        return jsonify(messages_list), 200
 
     except Error as e:
         return jsonify({"error": str(e)}), 500
@@ -270,9 +275,9 @@ def get_chats_by_ticket_uuid(ticket_uuid):
             conn.close()
 
 
-@app.route("/chats/<ticket_uuid>", methods=["POST"])
-def create_chat(ticket_uuid):
-    print(f"Creating chat for ticket UUID: {ticket_uuid}")
+@app.route("/messages/<ticket_uuid>", methods=["POST"])
+def create_message(ticket_uuid):
+    print(f"Creating message for ticket UUID: {ticket_uuid}")
     conn = None
     cursor = None
     try:
@@ -297,7 +302,7 @@ def create_chat(ticket_uuid):
             return jsonify({"error": "Missing required fields"}), 400
 
         cursor.execute(
-            "INSERT INTO chats (message_uuid, ticket_uuid, created_at, author_uuid, message, author_name, author_role, is_internal) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+            "INSERT INTO messages (message_uuid, ticket_uuid, created_at, author_uuid, message, author_name, author_role, is_internal) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
             (
                 data["message_uuid"],
                 data["ticket_uuid"],
