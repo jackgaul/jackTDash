@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from services import TicketService
 from repositories import TicketRepository, MessageRepository
 from utils import db_session_context
-from utils import get_next_it_owner_id, generate_ticket_tag
+from utils import get_next_it_owner_id
 
 bp = Blueprint("tickets", __name__)
 
@@ -27,8 +27,8 @@ def create_ticket():
                 category=data["category"],
                 department=data["department"],
                 it_owner_uuid=get_next_it_owner_id(),
-                ticket_tag=generate_ticket_tag(),
                 raw_text=data["raw_text"],
+                session=session,
             )
 
             return (

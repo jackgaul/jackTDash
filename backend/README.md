@@ -99,3 +99,12 @@ class Message(Base):
     ticket = relationship("Ticket")
     author = relationship("User")
 ```
+### Ticket Tags Model
+```python
+class TicketTag(Base):
+    __tablename__ = "ticket_tags"
+
+    tag_uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    tag_name = Column(String(50), unique=True, nullable=False)
+    sequence_name = Column(String(100), unique=True, nullable=False)
+```

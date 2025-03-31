@@ -123,104 +123,121 @@ def main():
     session.add_all(users)
     session.flush()  # Flush to get the IDs
 
-    # Create tickets
-    tickets = [
-        Ticket(
-            ticket_uuid=first_ticket_uuid,
-            ticket_tag="TICKET-1001",
-            title="Slack Channel Creation",
-            status="open",
-            priority="high",
-            category="Slack",
-            created_at=datetime.fromisoformat("2023-04-11 03:15:00"),
-            updated_at=datetime.fromisoformat("2023-04-11 07:30:00"),
-            description="Create a new Slack channel for the marketing department named #marketing-alerts and invite all members of the marketing department to the channel.",
-            raw_text="Create a new Slack channel for the marketing department named #marketing-alerts and invite all members of the marketing department to the channel.",
-            requesting_user_uuid=john_user_id,
-            department="Marketing",
-            it_owner_uuid=it_owner_user_id,
-        ),
-        Ticket(
-            ticket_uuid=uuid.uuid4(),
-            ticket_tag="TICKET-1002",
-            title="Windows update deployment issue",
-            status="open",
-            priority="high",
-            category="Slack",
-            created_at=datetime.fromisoformat("2023-04-11 08:00:00"),
-            updated_at=datetime.fromisoformat("2023-04-11 09:45:00"),
-            description="Critical Windows updates failing to deploy to marketing department machines",
-            raw_text="SCCM reporting 23 workstations in Marketing department failed to receive latest "
-            "security patches. Error code 0x80070002 appearing in logs. Potential security risk.",
-            requesting_user_uuid=user_ids[0],
-            department="Marketing",
-            it_owner_uuid=it_owner_user_id,
-        ),
-        Ticket(
-            ticket_uuid=uuid.uuid4(),
-            ticket_tag="TICKET-1003",
-            title="Network switch malfunction",
-            status="open",
-            priority="high",
-            category="Network",
-            created_at=datetime.fromisoformat("2023-04-11 07:15:00"),
-            updated_at=datetime.fromisoformat("2023-04-11 08:00:00"),
-            description="Core switch on 3rd floor showing intermittent failures",
-            raw_text="Switch SW-3F-CORE-01 reporting multiple interface errors. Affecting approximately "
-            "50 users on floor 3. Redundant path active but operating at reduced capacity.",
-            requesting_user_uuid=user_ids[1],
-            department="IT",
-            it_owner_uuid=it_owner_user_id,
-        ),
-        Ticket(
-            ticket_uuid=uuid.uuid4(),
-            ticket_tag="TICKET-1004",
-            title="Email service not working",
-            status="open",
-            priority="high",
-            category="Email",
-            created_at=datetime.fromisoformat("2023-04-10 09:00:00"),
-            updated_at=datetime.fromisoformat("2023-04-10 14:30:00"),
-            description="Users are unable to send or receive emails since this morning.",
-            raw_text="Multiple users reported inability to send or receive emails. System-wide email "
-            "outage affecting all departments. Requires immediate attention.",
-            requesting_user_uuid=user_ids[2],
-            department="Marketing",
-            it_owner_uuid=it_owner_user_id,
-        ),
-        Ticket(
-            ticket_uuid=uuid.uuid4(),
-            ticket_tag="TICKET-1005",
-            title="VPN connection issues",
-            status="in-progress",
-            priority="medium",
-            category="Network",
-            created_at=datetime.fromisoformat("2023-04-09 11:20:00"),
-            updated_at=datetime.fromisoformat("2023-04-10 10:15:00"),
-            description="Remote workers are experiencing intermittent VPN disconnections.",
-            raw_text="Remote team members reporting frequent VPN drops. Issue appears to be affecting "
-            "multiple geographic locations. Connection stability varies throughout the day.",
-            requesting_user_uuid=user_ids[0],
-            department="IT",
-            it_owner_uuid=it_owner_user_id,
-        ),
-        Ticket(
-            ticket_uuid=uuid.uuid4(),
-            ticket_tag="TICKET-1006",
-            title="New software installation request",
-            status="pending",
-            priority="low",
-            category="Software",
-            created_at=datetime.fromisoformat("2023-04-08 15:45:00"),
-            updated_at=datetime.fromisoformat("2023-04-09 09:30:00"),
-            description="Marketing department requesting Adobe Creative Suite installation on 5 workstations.",
-            raw_text="Marketing team needs full Adobe Creative Suite installed. Licenses already purchased. "
-            "Workstations identified: MKT-001 through MKT-005.",
-            requesting_user_uuid=user_ids[1],
-            department="Marketing",
-            it_owner_uuid=it_owner_user_id,
-        ),
+    categories = [
+        "Slack",
+        "Google",
+        "Network",
+        "Email",
+        "Software",
+        "Okta",
+        "General",
+        "Device",
     ]
+    for category in categories:
+        session.execute(text(f"DROP SEQUENCE IF EXISTS {category}_seq"))
+        # session.execute(text(f"CREATE SEQUENCE {category}_seq START 1"))
+
+    # Create tickets
+    tickets_data = [
+        {
+            "ticket_uuid": first_ticket_uuid,
+            "title": "Slack Channel Creation",
+            "status": "open",
+            "priority": "high",
+            "category": "Slack",
+            "created_at": datetime.fromisoformat("2023-04-11 03:15:00"),
+            "updated_at": datetime.fromisoformat("2023-04-11 07:30:00"),
+            "description": "Create a new Slack channel for the marketing department named #marketing-alerts and invite all members of the marketing department to the channel.",
+            "raw_text": "Create a new Slack channel for the marketing department named #marketing-alerts and invite all members of the marketing department to the channel.",
+            "requesting_user_uuid": john_user_id,
+            "department": "Marketing",
+            "it_owner_uuid": it_owner_user_id,
+        },
+        {
+            "ticket_uuid": uuid.uuid4(),
+            "title": "Windows update deployment issue",
+            "status": "open",
+            "priority": "high",
+            "category": "Device",
+            "created_at": datetime.fromisoformat("2023-04-11 08:00:00"),
+            "updated_at": datetime.fromisoformat("2023-04-11 09:45:00"),
+            "description": "Critical Windows updates failing to deploy to marketing department machines",
+            "raw_text": "SCCM reporting 23 workstations in Marketing department failed to receive latest "
+            "security patches. Error code 0x80070002 appearing in logs. Potential security risk.",
+            "requesting_user_uuid": user_ids[0],
+            "department": "Marketing",
+            "it_owner_uuid": it_owner_user_id,
+        },
+        {
+            "ticket_uuid": uuid.uuid4(),
+            "title": "Network switch malfunction",
+            "status": "open",
+            "priority": "high",
+            "category": "Network",
+            "created_at": datetime.fromisoformat("2023-04-11 07:15:00"),
+            "updated_at": datetime.fromisoformat("2023-04-11 08:00:00"),
+            "description": "Core switch on 3rd floor showing intermittent failures",
+            "raw_text": "Switch SW-3F-CORE-01 reporting multiple interface errors. Affecting approximately "
+            "50 users on floor 3. Redundant path active but operating at reduced capacity.",
+            "requesting_user_uuid": user_ids[1],
+            "department": "IT",
+            "it_owner_uuid": it_owner_user_id,
+        },
+        {
+            "ticket_uuid": uuid.uuid4(),
+            "title": "Email service not working",
+            "status": "open",
+            "priority": "high",
+            "category": "Email",
+            "created_at": datetime.fromisoformat("2023-04-10 09:00:00"),
+            "updated_at": datetime.fromisoformat("2023-04-10 14:30:00"),
+            "description": "Users are unable to send or receive emails since this morning.",
+            "raw_text": "Multiple users reported inability to send or receive emails. System-wide email "
+            "outage affecting all departments. Requires immediate attention.",
+            "requesting_user_uuid": user_ids[2],
+            "department": "Marketing",
+            "it_owner_uuid": it_owner_user_id,
+        },
+        {
+            "ticket_uuid": uuid.uuid4(),
+            "title": "VPN connection issues",
+            "status": "in-progress",
+            "priority": "medium",
+            "category": "Network",
+            "created_at": datetime.fromisoformat("2023-04-09 11:20:00"),
+            "updated_at": datetime.fromisoformat("2023-04-10 10:15:00"),
+            "description": "Remote workers are experiencing intermittent VPN disconnections.",
+            "raw_text": "Remote team members reporting frequent VPN drops. Issue appears to be affecting "
+            "multiple geographic locations. Connection stability varies throughout the day.",
+            "requesting_user_uuid": user_ids[0],
+            "department": "IT",
+            "it_owner_uuid": it_owner_user_id,
+        },
+        {
+            "ticket_uuid": uuid.uuid4(),
+            "title": "New software installation request",
+            "status": "pending",
+            "priority": "low",
+            "category": "Software",
+            "created_at": datetime.fromisoformat("2023-04-08 15:45:00"),
+            "updated_at": datetime.fromisoformat("2023-04-09 09:30:00"),
+            "description": "Marketing department requesting Adobe Creative Suite installation on 5 workstations.",
+            "raw_text": "Marketing team needs full Adobe Creative Suite installed. Licenses already purchased. "
+            "Workstations identified: MKT-001 through MKT-005.",
+            "requesting_user_uuid": user_ids[1],
+            "department": "Marketing",
+            "it_owner_uuid": it_owner_user_id,
+        },
+    ]
+
+    tickets = []
+    for data in tickets_data:
+        tag = Ticket.generate_ticket_tag(session, data["category"])
+        data["ticket_tag"] = tag
+
+        ticket = Ticket(**data)
+        tickets.append(ticket)
+
     session.add_all(tickets)
     session.flush()
 

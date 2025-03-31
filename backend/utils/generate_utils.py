@@ -1,5 +1,4 @@
 import uuid
-import random
 
 
 def get_next_it_owner_id():
@@ -11,11 +10,6 @@ def get_next_it_owner_id():
 def generate_ticket_uuid():
     # Generate a unique ticket_id
     return str(uuid.uuid4())
-
-
-def generate_ticket_tag():
-    # Temporary ticket tag generator, need to introduce a global ticket incrementing variable. probaly in another db table for each base tag
-    return "TICKET-" + str(random.randint(1000, 9999))
 
 
 def generate_message_uuid():

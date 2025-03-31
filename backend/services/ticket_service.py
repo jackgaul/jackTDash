@@ -1,6 +1,7 @@
 from typing import Optional, List
 from repositories import TicketRepository, MessageRepository
 from models import Ticket, Message
+from sqlalchemy.orm import Session
 
 
 class TicketService:
@@ -21,11 +22,14 @@ class TicketService:
         department: str,
         it_owner_uuid: str,
         raw_text: str,
-        ticket_tag: str,
+        session: Session,
     ) -> Ticket:
         # Validate inputs
         if not title or not description:
             raise ValueError("Title and description are required")
+
+        # Generate ticket tag
+        ticket_tag = Ticket.generate_ticket_tag(session, category)
 
         # Create ticket
         ticket = self.ticket_repository.create(
