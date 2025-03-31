@@ -324,7 +324,7 @@ def create_ticket_tool() -> List[Dict[str, Any]]:
                         },
                         "category": {
                             "type": "string",
-                            "description": "Application the bug is related to eg. Slack, Zoom, Notion, etc.",
+                            "description": "Application the bug is related to from the following list: Slack, Google, Network, Email, Software, Okta, General, Device",
                         },
                     },
                     "required": [
