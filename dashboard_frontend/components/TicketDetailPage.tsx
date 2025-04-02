@@ -70,8 +70,7 @@ export default function TicketDetail({ ticket, onBack, userLoggedIn }: TicketDet
 
     newSocket.on("new_message", (newMessage: MessageInterface) => {
       //setMessages(prev => prev ? [...prev, data] : [data])
-      console.log("New message232:", newMessage)
-      console.log("New message232:", typeof newMessage)
+
       setMessages(prev => prev ? [...prev, newMessage] : [newMessage])
     })
 
@@ -91,6 +90,9 @@ export default function TicketDetail({ ticket, onBack, userLoggedIn }: TicketDet
 
     try {
       if (socket) {
+        console.log("Sending message to socket")
+        console.log(userLoggedIn)
+        console.log(selectedTicket)
         socket.emit("send_message", {
           message: message,
           is_internal: isInternal,

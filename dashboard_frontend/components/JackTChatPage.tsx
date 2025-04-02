@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+
 import { UserInterface, MessageInterface, TicketInterface } from "@/typesNdefs/JackTTypes"
 import { ChatSection } from "./my_ui/chatComponent"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
+import { io, Socket } from "socket.io-client"
 import { fetchMessages, submitMessage, createTicket, updateTicketStatus, updateTicketPriority } from "@/api/ticketService"
 import { TicketDetailsPanel } from "./my_ui/ticketDetailsPanel"
 import { getStatusColor, getPriorityColor, formatDate } from "@/typesNdefs/utils"
@@ -20,6 +19,7 @@ interface JackTChatProps {
 
 export default function JackTChat({ userLoggedIn }: JackTChatProps) {
     const [messages, setMessages] = useState<MessageInterface[]>([])
+    const [ticketExists, setTicketExists] = useState<boolean>(false)
     const [selectedTicket, setSelectedTicket] = useState<TicketInterface>({
         ticket_uuid: "",
         ticket_tag: "",
@@ -35,7 +35,59 @@ export default function JackTChat({ userLoggedIn }: JackTChatProps) {
         it_owner_uuid: userLoggedIn.user_uuid,
         department: "",
     })
+    const [socket, setSocket] = useState<Socket | null>(null)
+    const [room, setRoom] = useState<string>("")
 
+
+    useEffect(() => {
+        const newSocket = io("http://127.0.0.1:5000/socket/messages")
+        setSocket(newSocket)
+
+
+        newSocket.on("new_message", (newMessage: MessageInterface) => {
+            console.log("New message:", newMessage)
+            setMessages(prev => prev ? [...prev, newMessage] : [newMessage])
+        })
+
+        return () => {
+            newSocket.close()
+        }
+    }, [])
+
+    useEffect(() => {
+        if (socket && ticketExists) {
+            socket.emit("join", {
+                author_name: userLoggedIn.first_name + "_" + userLoggedIn.last_name,
+                ticket_tag: selectedTicket.ticket_tag
+            })
+            setRoom(selectedTicket.ticket_tag)
+
+
+        }
+    }, [ticketExists])
+
+
+
+    const handleSendMessage = (message: string, isInternal: boolean, ticket_to_use: TicketInterface) => {
+        if (!message.trim()) return
+        console.log("Sending message:", message, isInternal)
+
+        try {
+            if (socket) {
+                socket.emit("send_message", {
+                    message: message,
+                    is_internal: isInternal,
+                    author_uuid: userLoggedIn.user_uuid,
+                    author_name: userLoggedIn.first_name + " " + userLoggedIn.last_name,
+                    author_role: userLoggedIn.role,
+                    ticket_uuid: ticket_to_use.ticket_uuid,
+                    ticket_tag: ticket_to_use.ticket_tag
+                })
+            }
+        } catch (error) {
+            console.error("Error sending message:", error)
+        }
+    }
     const handleSubmitComment = async (message: string, isInternal: boolean = true) => {
         if (!message.trim()) return
         let ticket_to_use: TicketInterface;
@@ -60,22 +112,20 @@ export default function JackTChat({ userLoggedIn }: JackTChatProps) {
 
             const newTicket = await createTicket(llmTicket)
             setSelectedTicket(newTicket)
+            setTicketExists(true)
             ticket_to_use = newTicket
+            await new Promise(resolve => setTimeout(resolve, 200))
+
         } else {
             ticket_to_use = selectedTicket
         }
 
         try {
-            const newMessage = await submitMessage(
-                ticket_to_use.ticket_uuid,
-                message,
-                isInternal,
-                userLoggedIn
-            )
-            setMessages(prev => prev ? [...prev, newMessage] : [newMessage])
+            handleSendMessage(message, isInternal, ticket_to_use)
         } catch (error) {
             console.error("Error submitting comment:", error)
         }
+
     }
 
     const handleStatusChange = async (newStatus: string) => {

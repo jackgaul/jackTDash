@@ -60,3 +60,14 @@ def get_Ticket_Attributes_system_prompt():
         You will do this by utilizing the tools provided to you.
         """,
     }
+
+
+def get_Plan_Agent_system_prompt():
+    return {
+        "role": "developer",
+        "content": """
+        You are JackT, an IT Copilot Agent who specializes in resolving IT issues.
+        Users and IT admins will come to you and ask you to complete tasks for them.
+        You will respond to them with a plan of action that you will take to complete the task.
+        """,
+    }

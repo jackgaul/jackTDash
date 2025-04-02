@@ -6,7 +6,7 @@ const API_BASE_URL = "http://127.0.0.1:5000/api"
 // Fetch all tickets
 export async function fetchTickets(): Promise<TicketInterface[]> {
     const response = await fetch(`${API_BASE_URL}/tickets/`)
-    console.log("response", response)
+
     if (!response.ok) {
         throw new Error(`Error fetching tickets: ${response.statusText}`)
     }
@@ -140,7 +140,7 @@ export async function createTicket(ticket: TicketInterface): Promise<TicketInter
     }
     const data = await response.json()
     const newTicket = data as TicketInterface
-    console.log("ticket created in TicketService", newTicket)
+
 
     return data
 }

@@ -5,7 +5,7 @@ export function getStatusColor(status: string) {
 
             return "bg-blue-500 hover:bg-blue-600"
         case "in-progress":
-            console.log(status)
+
             return "bg-yellow-500 hover:bg-yellow-600"
         case "pending":
             return "bg-purple-500 hover:bg-purple-600"

@@ -1,7 +1,9 @@
 from flask_socketio import Namespace, emit, join_room
-from services import MessageService
-from repositories import MessageRepository, TicketRepository
+from services import MessageService, UserService
+from repositories import MessageRepository, TicketRepository, UserRepository
 from utils.db import db_session_context
+from models import Message
+from LLMAgent import llm_plan_agent
 
 
 class MessageNamespace(Namespace):
@@ -66,6 +68,68 @@ class MessageNamespace(Namespace):
 
         # Broadcast the message to all clients in the room.
         emit("new_message", message_dict, room=ticket_tag)
+        print(
+            f"Message from {message_dict.get('author_name')} in room {ticket_tag}: {message_dict.get('message')}"
+        )
+        self.process_ai_message(message_dict, ticket_tag)
+
+    def process_ai_message(self, user_message: dict, ticket_tag: str):
+        """
+        Expected data format: Message
+        {
+        message_uuid: str,
+        ticket_uuid: str,
+        created_at: datetime,
+        author_uuid: str,
+        author_name: str,
+        author_role: str,
+        is_internal: bool,
+        message: str
+        }
+        """
+
+        # Get response from LLM
+        response = llm_plan_agent(user_message.get("message"))
+        if (
+            response.get("type") != "message"
+            or response.get("response") == "Error: No response from agent"
+        ):
+            return
+
+        agent_response = response.get("response")
+
+        with db_session_context() as session:
+            message_repository = MessageRepository(session)
+            ticket_repository = TicketRepository(session)
+            message_service = MessageService(message_repository, ticket_repository)
+            user_repository = UserRepository(session)
+            user_service = UserService(user_repository)
+            # Get Agent Info from database
+            agent_info = user_service.get_agent_user("JackT", "Agent")
+
+            # Add the response to the database
+            agent_message = message_service.add_message(
+                author_uuid=agent_info.user_uuid,
+                ticket_uuid=user_message.get("ticket_uuid"),
+                message=agent_response,
+                author_name=agent_info.first_name + " " + agent_info.last_name,
+                author_role=agent_info.role,
+                is_internal=False,
+            )
+
+            message_dict = {
+                "message_uuid": str(agent_message.message_uuid),
+                "ticket_uuid": str(agent_message.ticket_uuid),
+                "created_at": agent_message.created_at.isoformat(),
+                "author_uuid": str(agent_message.author_uuid),
+                "author_name": agent_message.author_name,
+                "author_role": agent_message.author_role,
+                "is_internal": agent_message.is_internal,
+                "message": agent_message.message,
+            }
+
+        emit("new_message", message_dict, room=ticket_tag)
+
         print(
             f"Message from {message_dict.get('author_name')} in room {ticket_tag}: {message_dict.get('message')}"
         )

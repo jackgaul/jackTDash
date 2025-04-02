@@ -10,6 +10,17 @@ class UserRepository:
     def get_by_uuid(self, user_uuid: str) -> Optional[User]:
         return self.session.query(User).filter(User.user_uuid == user_uuid).first()
 
+    def get_agent_user(
+        self, agent_first_name: str, agent_last_name: str
+    ) -> Optional[User]:
+        return (
+            self.session.query(User)
+            .filter(
+                User.first_name == agent_first_name, User.last_name == agent_last_name
+            )
+            .first()
+        )
+
     def get_all(self) -> List[User]:
         return self.session.query(User).all()
 

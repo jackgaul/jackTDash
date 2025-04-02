@@ -8,6 +8,7 @@ from openai import OpenAI
 from .system_prompts import (
     get_JackT_Agent_system_prompt,
     get_Ticket_Attributes_system_prompt,
+    get_Plan_Agent_system_prompt,
 )
 from .tools import (
     get_application_route_tool,
@@ -26,7 +27,10 @@ class Conversation:
 
 def openai_request(conversation, tool_function):
 
-    conversation.tools = tool_function()
+    if tool_function:
+        conversation.tools = tool_function()
+    else:
+        conversation.tools = []
 
     response = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -74,7 +78,7 @@ def llm_ticket_base_attributes(user_prompt):
     )
     response = openai_request(conversation, create_ticket_tool)
     if response.choices[0].message.tool_calls:
-        # print(response.choices[0].message.tool_calls[0].function.arguments)
+
         return {
             "response": response.choices[0].message.tool_calls[0].function.arguments,
             "type": "create_ticket",
@@ -82,6 +86,22 @@ def llm_ticket_base_attributes(user_prompt):
     else:
         print(response.choices[0].message.content)
         return {"response": response.choices[0].message.content, "type": "message"}
+
+
+def llm_plan_agent(user_prompt):
+    conversation = Conversation(
+        messages=[
+            get_Plan_Agent_system_prompt(),
+            {"role": "user", "content": user_prompt},
+        ],
+        tools=[],
+    )
+    response = openai_request(conversation, None)
+    if response.choices[0].message.content:
+        return {"response": response.choices[0].message.content, "type": "message"}
+    else:
+        print(response.choices[0].message.content)
+        return {"response": "Error: No response from agent", "type": "message"}
 
 
 if __name__ == "__main__":
