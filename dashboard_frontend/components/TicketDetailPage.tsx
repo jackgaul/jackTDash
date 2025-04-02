@@ -11,7 +11,7 @@ import { TicketInterface, MessageInterface, UserInterface } from "@/typesNdefs/J
 import { TicketDetailsPanel } from "./my_ui/ticketDetailsPanel"
 import { fetchMessages, fetchUser, submitMessage, deleteTicket, updateTicketStatus, updateTicketPriority } from "@/api/ticketService"
 import { getStatusColor, getPriorityColor, formatDate } from "@/typesNdefs/utils"
-
+import { io, Socket } from "socket.io-client"
 interface TicketDetailProps {
   ticket: TicketInterface
   onBack: () => void
@@ -23,6 +23,9 @@ export default function TicketDetail({ ticket, onBack, userLoggedIn }: TicketDet
   const [messages, setMessages] = useState<MessageInterface[] | null>(null)
   const [requester, setRequester] = useState<UserInterface | null>(null)
   const [assignedTo, setAssignedTo] = useState<UserInterface | null>(null)
+
+  const [room, setRoom] = useState<string>("")
+  const [socket, setSocket] = useState<Socket | null>(null)
 
 
   useEffect(() => {
@@ -50,7 +53,58 @@ export default function TicketDetail({ ticket, onBack, userLoggedIn }: TicketDet
     }
 
     loadData()
-  }, [selectedTicket])
+  }, [])
+
+  useEffect(() => {
+    const newSocket = io("http://127.0.0.1:5000/socket/messages")
+    setSocket(newSocket)
+
+    if (newSocket) {
+      console.log("Connected to the socket")
+    }
+    newSocket.emit("join", {
+      author_name: userLoggedIn.first_name + "_" + userLoggedIn.last_name,
+      ticket_tag: selectedTicket.ticket_tag
+    })
+    setRoom(selectedTicket.ticket_tag)
+
+    newSocket.on("new_message", (newMessage: MessageInterface) => {
+      //setMessages(prev => prev ? [...prev, data] : [data])
+      console.log("New message232:", newMessage)
+      console.log("New message232:", typeof newMessage)
+      setMessages(prev => prev ? [...prev, newMessage] : [newMessage])
+    })
+
+    newSocket.on("system_message", (data: MessageInterface) => {
+      console.log(data)
+    })
+
+    return () => {
+      newSocket.close()
+    }
+  }, [])
+
+  const handleSendMessage = (message: string, isInternal: boolean) => {
+    if (!message.trim()) return
+    console.log("Sending message:", message, isInternal)
+
+
+    try {
+      if (socket) {
+        socket.emit("send_message", {
+          message: message,
+          is_internal: isInternal,
+          author_uuid: userLoggedIn.user_uuid,
+          author_name: userLoggedIn.first_name + " " + userLoggedIn.last_name,
+          author_role: userLoggedIn.role,
+          ticket_uuid: selectedTicket.ticket_uuid,
+          ticket_tag: selectedTicket.ticket_tag
+        })
+      }
+    } catch (error) {
+      console.error("Error sending message:", error)
+    }
+  }
 
   if (!selectedTicket) {
     return (
@@ -69,34 +123,7 @@ export default function TicketDetail({ ticket, onBack, userLoggedIn }: TicketDet
   }
 
 
-  const handleSubmitComment = async (message: string, isInternal: boolean) => {
-    if (!message.trim()) return
-    // TODO: Send the comment to an API
-    try {
-      const newMessage = await submitMessage(
-        selectedTicket.ticket_uuid,
-        message,
-        isInternal,
-        userLoggedIn
-      )
 
-      setMessages(prev => prev ? [...prev, newMessage] : [newMessage])
-
-      toast({
-        title: "Comment submitted",
-        description: "Your comment has been added to the ticket",
-      })
-
-    } catch (error) {
-      console.error("Error submitting comment:", error)
-      toast({
-        title: "Error submitting comment",
-        description: "Please try again later",
-        variant: "destructive",
-      })
-    }
-
-  }
 
   const handleStatusChange = async (newStatus: string) => {
     setSelectedTicket({ ...selectedTicket, status: newStatus })
@@ -155,7 +182,7 @@ export default function TicketDetail({ ticket, onBack, userLoggedIn }: TicketDet
             </div>
             <ChatSection
               messages={messages}
-              onSubmitComment={handleSubmitComment}
+              onSubmitComment={handleSendMessage}
               chatTitle="Comments & Activity"
             />
           </div>
