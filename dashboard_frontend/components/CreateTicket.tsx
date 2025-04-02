@@ -25,6 +25,12 @@ export default function CreateTicket({ userLoggedIn, backToTicketList }: CreateT
 
     const handleCreateTicket = async () => {
         console.log("Priority: ", priority, "Status: ", status, "Category: ", category, "Title: ", title, "Description: ", description)
+
+        if (title === "" || description === "") {
+            alert("Title and Description are required")
+            return
+        }
+
         const newTicket: TicketInterface = {
             ticket_uuid: "",
             ticket_tag: "",
@@ -32,10 +38,10 @@ export default function CreateTicket({ userLoggedIn, backToTicketList }: CreateT
             updated_at: "",
             requesting_user_uuid: userLoggedIn.user_uuid,
             it_owner_uuid: userLoggedIn.user_uuid,
-            department: department,
-            priority: priority,
-            status: status,
-            category: category,
+            department: department !== "" ? department : "IT",
+            priority: priority !== "" ? priority : "low",
+            status: status !== "" ? status : "open",
+            category: category !== "" ? category : "General",
             title: title,
             description: description,
             raw_text: "",
