@@ -14,11 +14,11 @@ import { getLLMBaseAttributes } from "@/api/llmService"
 
 interface JackTChatProps {
     userLoggedIn: UserInterface
-    onBack: () => void
+
 }
 
 
-export default function JackTChat({ userLoggedIn, onBack }: JackTChatProps) {
+export default function JackTChat({ userLoggedIn }: JackTChatProps) {
     const [messages, setMessages] = useState<MessageInterface[]>([])
     const [selectedTicket, setSelectedTicket] = useState<TicketInterface>({
         ticket_uuid: "",
