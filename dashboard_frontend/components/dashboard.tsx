@@ -7,7 +7,7 @@ import TicketDetail from "./TicketDetailPage"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { TicketInterface, UserInterface } from "@/typesNdefs/JackTTypes"
 import JackTChat from "./JackTChatPage"
-
+import CreateTicket from "./CreateTicket"
 export default function Dashboard() {
   const [selectedTicket, setSelectedTicket] = useState<TicketInterface | null>(null)
   const [userLoggedIn] = useState<UserInterface>({
@@ -17,7 +17,7 @@ export default function Dashboard() {
     email: "jack@example.com",
     role: "IT Manager",
   })
-  const [page, setPage] = useState<"TicketList" | "TicketDetail" | "JackTChat">("TicketList")
+  const [page, setPage] = useState<"TicketList" | "TicketDetail" | "JackTChat" | "TicketCreate">("TicketList")
 
   const handleSelectTicket = (ticket: TicketInterface) => {
 
@@ -30,8 +30,13 @@ export default function Dashboard() {
     setPage("TicketList")
   }
 
-  const handlePageClick = (page: "TicketList" | "TicketDetail" | "JackTChat") => {
+  const handlePageClick = (page: "TicketList" | "TicketDetail" | "JackTChat" | "TicketCreate") => {
     setPage(page)
+  }
+
+  const handleBackToTicketList = () => {
+    setSelectedTicket(null)
+    setPage("TicketList")
   }
 
 
@@ -39,7 +44,7 @@ export default function Dashboard() {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen">
-        <AppSidebar userLoggedIn={userLoggedIn} onPageClick={handlePageClick} />
+        <AppSidebar userLoggedIn={userLoggedIn} onPageClick={handlePageClick} currentPage={page} />
         <SidebarInset className="flex-1">
           <div className="p-6 w-full">
             <h1 className="text-2xl font-bold mb-6">IT Service Management Dashboard</h1>
@@ -64,10 +69,14 @@ export default function Dashboard() {
                       userLoggedIn={userLoggedIn} />
                   )
                   )
+                case "TicketCreate":
+                  return <CreateTicket
+                    userLoggedIn={userLoggedIn}
+                    backToTicketList={handleBackToTicketList}
+                  />
                 case "JackTChat":
                   return <JackTChat
                     userLoggedIn={userLoggedIn}
-                    onBack={handleBackToList}
                   />
                 default:
                   return <TicketsList onSelectTicket={handleSelectTicket} userLoggedIn={userLoggedIn} />

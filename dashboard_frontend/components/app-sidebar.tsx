@@ -23,10 +23,11 @@ import { UserInterface } from "@/typesNdefs/JackTTypes"
 
 interface AppSidebarProps { // Need to pass in the current page to set the active button
   userLoggedIn: UserInterface
-  onPageClick: (page: "TicketList" | "TicketDetail" | "JackTChat") => void
+  onPageClick: (page: "TicketList" | "TicketDetail" | "JackTChat" | "TicketCreate") => void
+  currentPage: "TicketList" | "TicketDetail" | "JackTChat" | "TicketCreate"
 }
 
-export function AppSidebar({ userLoggedIn, onPageClick }: AppSidebarProps) {
+export function AppSidebar({ userLoggedIn, onPageClick, currentPage }: AppSidebarProps) {
   return (
     <Sidebar className="border-r">
       <SidebarHeader className="flex items-center px-4 py-2">
@@ -51,25 +52,25 @@ export function AppSidebar({ userLoggedIn, onPageClick }: AppSidebarProps) {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="All Tickets" isActive={false} onClick={() => onPageClick("TicketList")}>
+                <SidebarMenuButton tooltip="All Tickets" isActive={currentPage === "TicketList"} onClick={() => onPageClick("TicketList")}>
                   <ClipboardList className="h-5 w-5" />
                   <span>All Tickets</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="My Tickets" isActive={true} onClick={() => onPageClick("TicketList")}>
+                <SidebarMenuButton tooltip="My Tickets" isActive={currentPage === "TicketList"} onClick={() => onPageClick("TicketList")}>
                   <ClipboardList className="h-5 w-5" />
                   <span>My Tickets</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Create Ticket">
+                <SidebarMenuButton tooltip="Create Ticket" isActive={currentPage === "TicketCreate"} onClick={() => onPageClick("TicketCreate")}>
                   <PlusCircle className="h-5 w-5" />
                   <span>Create Ticket</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="JackT Chat" onClick={() => onPageClick("JackTChat")}>
+                <SidebarMenuButton tooltip="JackT Chat" isActive={currentPage === "JackTChat"} onClick={() => onPageClick("JackTChat")}>
                   <MessageSquare className="h-5 w-5" />
                   <span>JackT Chat</span>
                 </SidebarMenuButton>
